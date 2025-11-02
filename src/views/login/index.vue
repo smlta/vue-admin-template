@@ -19,23 +19,22 @@
           <el-form-item>
             <el-button type="primary" style="width:300px;" @click="login">登录</el-button>
           </el-form-item>
-          <el-button type="primary" @click="testAPI">测试接口</el-button>
+
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
-import request from '@/utils/request'
+
 export default {
   name: 'Login',
   data() {
     return {
       loginform: {
-        mobile: '',
-        password: '',
-        isAgree: false,
-        form: {} // 表单DOM
+        mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
+        password: process.env.NODE_ENV === 'development' ? `itHeiMa@${new Date().toISOString().slice(0, 10).replace(/-/g, '')}` : '',
+        isAgree: process.env.NODE_ENV === 'development' // 如果项目处于开发环境则自动填写登录信息方便测试
       }, // 登录表单对象
       rules: {
         mobile: [{
@@ -67,20 +66,22 @@ export default {
             }
           }
         ]
-      } // 规则对象,每一个属性都是一个待校验的数据,它是一个对象数组,数组中的每一个元素都是一个规则对象
-    } // 在使用el进行数据校验时还得给el-items 绑定prop属性,值为要校验的数据名
+      }, // 规则对象,每一个属性都是一个待校验的数据,它是一个对象数组,数组中的每一个元素都是一个规则对象
+      // 在使用el进行数据校验时还得给el-items 绑定prop属性,值为要校验的数据名
+      form: {} // 表单DOM
+    }
+  },
+  created() {
+    alert(process.env.NODE_ENV)
   },
   methods: {
     login() {
-      this.$refs.form.validate(isOk => {
+      this.$refs.form.validate(async isOk => {
         if (isOk) {
-          this.$store.dispatch('user/login', this.loginform) // 调用登录Action,传递表单数据发起请求
+          await this.$store.dispatch('user/login', this.loginform) // 调用登录Action,传递表单数据发起请求,等待promise当action执行完会默认返回一个promise
+          this.$router.push('/')
         }
       }) // 获取表单DOM调用validate方法对所有表单项进行校验,validate可以传一个callback参数,如果校验通过callback 的isOk参数为true
-    },
-    async  testAPI() {
-      const res = await request.post('/sys/login', { mobile: '13800000002', password: 'itHeiMa@20251101' })
-      console.log(res)
     }
   }
 

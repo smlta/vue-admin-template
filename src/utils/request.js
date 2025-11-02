@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '@/store/index'
 import { Message } from 'element-ui'
 const request = axios.create({
-  baseURL: '/api', // 配置基地址
+  baseURL: process.env.VUE_APP_BASE_API, // 配置基地址
   timeout: 10000
 }) // 创建axios实例
 request.interceptors.request.use((config) => {

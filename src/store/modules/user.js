@@ -1,4 +1,5 @@
 import { getToken, setToken, removeToken } from '@/utils/auth' // 导入Token相关的API
+import { login } from '@/api/user' // 导入登录API
 const state = {
   token: getToken() // token的值从本地储存读取
 }
@@ -13,10 +14,9 @@ const mutations = {
   }
 }
 const actions = {
-  login(context, data) {
-    console.log(data)
-    // 发起请求
-    context.commit('setToken', 'caisjdoasijdo') // 调用mutation回调保存token
+  async login(context, data) {
+    const token = await login(data)
+    context.commit('setToken', token) // 调用mutation回调保存token,异步函数无return默认返回fulfilled状态的promise,也就是该action如果正常执行完,会返回一个fulfill状态的promise
   } // login异步获取表单数据发起请求,回调保存token(mutation)
 }
 export default {
