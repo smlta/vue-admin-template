@@ -71,9 +71,6 @@ export default {
       form: {} // 表单DOM
     }
   },
-  created() {
-    alert(process.env.NODE_ENV)
-  },
   methods: {
     login() {
       this.$refs.form.validate(async isOk => {

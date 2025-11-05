@@ -3,13 +3,17 @@ import store from './store' // 导入vuex仓库实例
 import nProgress from 'nprogress' // 导入页面导航栏进度条插件
 import 'nprogress/nprogress.css' // 导入进度条样式
 const whiteList = ['/login', '/404'] // 白名单页面(访问不需要token)
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   nProgress.start() // 开启进度条
   if (store.getters.token) {
     if (to.path === '/login') {
       next('/') // 当next()里面写了路径就不会执行后置守卫,所以跳回dashboard页后需要手动关闭进度条
       nProgress.done()
     } else {
+      if (!store.getters.userId) {
+        await store.dispatch('user/getUserInfo')
+      } // 如果有token但访问的不是登录页,判断是否获取过用户个人信息没获取过就发起请求获取
+      // 通过user模块中userinfo userId字段值的有无判断是否获取过数据
       next()
     } // 如果有token判断要去的是不是登录页,如果是拦截回主页,不是则直接放行
   } else {
