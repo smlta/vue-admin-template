@@ -18,10 +18,10 @@
               首页
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <a target="_blank" href="https://github.com/smlta/vue-admin-template">
             <el-dropdown-item>项目地址</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
+          <a target="_blank" @click.prevent="alterPassword">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </a>
           <el-dropdown-item @click.native="logout">
@@ -30,6 +30,23 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+    <el-dialog title="修改密码" width="500px" :visible.sync="showDialog" append-to-body @close="cancel"> <!--监听dialog的close自定义事件该事件会在点击x时触发-->
+      <el-form ref="form" label-width="120px" :model="passwordForm" :rules="rules"> <!--label-width为表单项宽度即item的宽度 label为item前面的文字-->
+        <el-form-item label="旧密码" prop="oldPassword">
+          <el-input v-model="passwordForm.oldPassword" show-password size="small" />
+        </el-form-item>
+        <el-form-item label="新密码" prop="newPassword">
+          <el-input v-model="passwordForm.newPassword" show-password size="small" />
+        </el-form-item>
+        <el-form-item label="重复密码" prop="confirmPassword">
+          <el-input v-model="passwordForm.confirmPassword" show-password size="small" />
+        </el-form-item>
+        <el-form-item>
+          <el-button size="mini" type="primary" @click="isOk">确认</el-button>
+          <el-button size="mini" @click="cancel">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -37,11 +54,57 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import { alterPassword } from '@/api/user' // 导入修改密码接口
 export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      showDialog: false,
+      passwordForm: {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      }, // 密码表单对象
+      rules: {
+        oldPassword: [{
+          required: true,
+          message: '旧密码必须输入',
+          trigger: 'blur'
+        }],
+        newPassword: [{
+          required: true,
+          message: '新密码必须输入',
+          trigger: 'blur'
+        },
+        {
+          min: 6,
+          max: 16,
+          message: '新密码长度需在6-16位',
+          trigger: 'blur'
+        }
+        ],
+        confirmPassword: [
+          {
+            required: true,
+            message: '重复密码必须输入',
+            trigger: 'blur'
+          },
+          { trigger: 'blur',
+            validator: (rules, value, callback) => {
+              if (value !== this.passwordForm.newPassword) {
+                callback(new Error('两次密码不一致'))
+              } else {
+                callback()
+              }
+            } // 校验函数rules为校验规则对象,value为当前要校验字段的值(confirmPassword),callback回调,callback()为校验通过,callback(new Error())为校验失败
+          } // 在el-form的校验函数中this指向被校验字段的相关信息对象,所以要用箭头函数
+        ]
+      }, // 规则对象
+      form: null // 表单DOM
+    }
   },
   computed: {
     ...mapGetters([
@@ -57,6 +120,22 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push('/login')
+    },
+    alterPassword() {
+      this.showDialog = true
+    },
+    isOk() {
+      this.$refs.form.validate(async isok => {
+        if (isok) {
+          await alterPassword(this.passwordForm)
+          this.$message.success('修改密码成功')
+          this.cancel()
+        } // 如果校验通过
+      }) // 点击确定先对表单进行一次整体校验
+    },
+    cancel() {
+      this.$refs.form.resetFields() // 重置表单状态
+      this.showDialog = false // 关闭dialog
     }
   }
 }

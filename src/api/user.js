@@ -12,3 +12,11 @@ export const getUserInfo = () => {
     url: '/sys/profile'
   })
 } // 获取用户信息接口
+
+export const alterPassword = (data) => {
+  return request({
+    url: '/sys/user/updatePass',
+    method: 'PUT',
+    data
+  })
+} // 修改密码接口
