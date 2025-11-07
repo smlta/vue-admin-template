@@ -26,6 +26,10 @@ const actions = {
   async getUserInfo(context) {
     const res = await getUserInfo() // 调用获取用户信息接口
     context.commit('setUserInfo', res)
+  },
+  async logout(context) {
+    context.commit('clearToken')
+    context.commit('setUserInfo', {})
   }
 }
 export default {

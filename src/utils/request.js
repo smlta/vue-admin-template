@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '@/store/index'
 import { Message } from 'element-ui'
+import router from '@/router'
 const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // 配置基地址
   timeout: 10000
@@ -29,7 +30,14 @@ request.interceptors.response.use((response) => {
     })
     return Promise.reject(new Error(message))
   }
-}, (error) => {
+}, async(error) => {
+  if (error.response.status === 401) {
+    Message({ type: 'warning', message: 'token过期请重新登录' })
+    await store.dispatch('user/logout') // 等待登出异步完成
+    router.push('/login')
+    return Promise.reject(error)
+  }
+
   Message({ type: 'error', message: error.message })
   return Promise.reject(error) // 当返回的响应状态码非2xx时,说明请求失败弹出错误提示框并返回reject的promise
 })
