@@ -20,12 +20,12 @@ export default {
       if (icon.includes('el-icon')) {
         vnodes.push(<i class={[icon, 'sub-el-icon']} />)
       } else {
-        vnodes.push(<svg-icon icon-class={icon}/>)
+        vnodes.push(<svg-icon icon-class={icon}/>) // 渲染对应的svg-icon
       }
     }
 
     if (title) {
-      vnodes.push(<span slot='title'>{(title)}</span>)
+      vnodes.push(<span slot='title'>{(title)}</span>) // 渲染对应的标题
     }
     return vnodes
   }
