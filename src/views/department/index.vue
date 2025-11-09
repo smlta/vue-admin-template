@@ -4,7 +4,7 @@
     <el-tree :data="data" :props="defaultprops" default-expand-all> <!--data为数据数组,defaultsprops配置对象 default-expand-all默认展开所有节点-->
       <template v-slot="{data}">
         <el-row style="width:100%;height:40px" type="flex" justify="space-between" align="middle">
-          <el-col>{{ data.label }}</el-col>
+          <el-col>{{ data.name }}</el-col>
           <el-col :span="4">
             <span class="tree-manager">{{ data.managerName }}</span>
             <el-dropdown>
@@ -25,23 +25,34 @@
 </template>
 
 <script>
+import { getDepartmentList } from '@/api/department'
+import { transListToTreeData } from '@/utils/index' // 导入工具函数
 export default {
   name: 'Department',
   data() {
     return {
       data: [{
-        label: '传智教育', // 值为被显示的内容
+        name: '传智教育', // 值为被显示的内容
         managerName: '张三',
-        children: [{ label: '总裁办', managerName: '王七' }, { label: '行政部', managerName: '绫地宁宁' }] // 显示内容的子项
+        children: [{ name: '总裁办', managerName: '王七' }, { name: '行政部', managerName: '绫地宁宁' }] // 显示内容的子项
       }, {
         label: '人事办',
         managerName: '李四',
-        children: [{ label: '财务核算部', managerName: '丰川祥子' }, { label: '税务管理部', managerName: '水墨兰庭' }, { label: '薪资管理部', managerName: '千早爱音' }]
+        children: [{ name: '财务核算部', managerName: '丰川祥子' }, { name: '税务管理部', managerName: '水墨兰庭' }, { name: '薪资管理部', managerName: '千早爱音' }]
       }], // 数据数组每个对象都可以理解为树中的一条分支
       defaultprops: {
-        label: 'label', // 设置显示内容的字段名,也就是哪个字段的内容要被读取显示
+        label: 'name', // 设置显示内容的字段名,也就是哪个字段的内容要被读取显示
         children: 'children' // 设置子节点的字段名,设置后会去对象里的children字段读取分支的子节点
       }
+    }
+  },
+  created() {
+    this.getdepartmentList()
+  },
+  methods: {
+    async  getdepartmentList() {
+      const result = await getDepartmentList()
+      this.data = transListToTreeData(result, 0)
     }
   }
 }
@@ -56,7 +67,7 @@ export default {
     font-size: 12px;
   }
   .tree-manager {
-    margin: 10px;
+    margin-right: 35px;
     width: 50px;
     display: inline-block;
   }

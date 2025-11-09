@@ -115,3 +115,17 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 该工具函数用来将线性列表数据转为层级列表数据
+export function transListToTreeData(list, rootvalue) {
+  const arr = []
+  list.forEach(item => {
+    if (item.pid === rootvalue) {
+      const children = transListToTreeData(list, item.id)
+      item.children = children
+      arr.push(item)
+    }
+  })
+  return arr
+} // rootvalue为根节点的id值,list为数组
+
