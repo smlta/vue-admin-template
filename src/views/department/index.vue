@@ -1,34 +1,39 @@
 <template>
   <div class="container">
-    <div class="app-container" />
-    <el-tree :data="data" :props="defaultprops" default-expand-all> <!--data为数据数组,defaultsprops配置对象 default-expand-all默认展开所有节点-->
-      <template v-slot="{data}">
-        <el-row style="width:100%;height:40px" type="flex" justify="space-between" align="middle">
-          <el-col>{{ data.name }}</el-col>
-          <el-col :span="4">
-            <span class="tree-manager">{{ data.managerName }}</span>
-            <el-dropdown>
-              <span class="el-dropdown-link">
-                操作<i class="el-icon-arrow-down el-icon--right" />
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>添加子部门</el-dropdown-item>
-                <el-dropdown-item>编辑</el-dropdown-item>
-                <el-dropdown-item>删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </el-col>
-        </el-row>
-      </template>
-    </el-tree> <!--el-tree内置了一个作用域插槽,作用域插槽渲染的次数取决于节点数也就是data中有几个对象-->
-  </div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
-</template>
+    <div class="app-container">
+      <el-tree :data="data" :props="defaultprops" default-expand-all :expand-on-click-node="false"> <!--data为数据数组,defaultsprops配置对象 default-expand-all默认展开所有节点-->
+        <template v-slot="{data}"> <!--expand-on-click-node属性用来控制点击节点是是否折叠其子节点 false为否 -->
+          <el-row style="width:100%;height:40px" type="flex" justify="space-between" align="middle">
+            <el-col>{{ data.name }}</el-col>
+            <el-col :span="4">
+              <span class="tree-manager">{{ data.managerName }}</span>
+              <el-dropdown @command="operateDept">
+                <span class="el-dropdown-link">
+                  操作<i class="el-icon-arrow-down el-icon--right" />
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+                  <el-dropdown-item command="edit">编辑</el-dropdown-item>
+                  <el-dropdown-item command="dele">删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-col>
+          </el-row>
+        </template>
+      </el-tree> <!--el-tree内置了一个作用域插槽,作用域插槽渲染的次数取决于节点数也就是data中有几个对象-->
+    </div>
+    <add-dept :show-dialog.sync="showdialog" /></div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
+</template>            <!-- :showDialog = "showdialog", @update:showDialog = " showdialog = $event" -->
 
 <script>
 import { getDepartmentList } from '@/api/department'
 import { transListToTreeData } from '@/utils/index' // 导入工具函数
+import addDept from './components/add-dept.vue'
 export default {
   name: 'Department',
+  components: {
+    addDept
+  },
   data() {
     return {
       data: [{
@@ -43,7 +48,8 @@ export default {
       defaultprops: {
         label: 'name', // 设置显示内容的字段名,也就是哪个字段的内容要被读取显示
         children: 'children' // 设置子节点的字段名,设置后会去对象里的children字段读取分支的子节点
-      }
+      },
+      showdialog: null // 是否显示弹框
     }
   },
   created() {
@@ -53,6 +59,11 @@ export default {
     async  getdepartmentList() {
       const result = await getDepartmentList()
       this.data = transListToTreeData(result, 0)
+    },
+    operateDept(type) {
+      if (type === 'add') {
+        this.showdialog = true
+      }
     }
   }
 }
