@@ -28,7 +28,11 @@ export default {
     showDialog: {
       type: Boolean,
       default: false
-    }
+    },
+    currentNode: {
+      type: Number,
+      default: null
+    } // 当前操作的节点id
   },
   data() {
     return {

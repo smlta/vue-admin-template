@@ -7,10 +7,10 @@
             <el-col>{{ data.name }}</el-col>
             <el-col :span="4">
               <span class="tree-manager">{{ data.managerName }}</span>
-              <el-dropdown @command="operateDept">
+              <el-dropdown @command="operateDept($event,data.id)">
                 <span class="el-dropdown-link">
-                  操作<i class="el-icon-arrow-down el-icon--right" />
-                </span>
+                  操作<i class="el-icon-arrow-down el-icon--right" />                 <!--当点击el-dropdown-item也就是下拉项时,会触发el-dropdown的command自定义事件-->
+                </span>                                                               <!--然后向父组件传递事件参数,参数的值就是你当前点击item command绑定的值 $event可以用来接收事件参数-->
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="add">添加子部门</el-dropdown-item>
                   <el-dropdown-item command="edit">编辑</el-dropdown-item>
@@ -22,7 +22,7 @@
         </template>
       </el-tree> <!--el-tree内置了一个作用域插槽,作用域插槽渲染的次数取决于节点数也就是data中有几个对象-->
     </div>
-    <add-dept :show-dialog.sync="showdialog" /></div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
+    <add-dept :show-dialog.sync="showdialog" :current-node="currentNode" /></div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
 </template>            <!-- :showDialog = "showdialog", @update:showDialog = " showdialog = $event" -->
 
 <script>
@@ -49,7 +49,8 @@ export default {
         label: 'name', // 设置显示内容的字段名,也就是哪个字段的内容要被读取显示
         children: 'children' // 设置子节点的字段名,设置后会去对象里的children字段读取分支的子节点
       },
-      showdialog: null // 是否显示弹框
+      showdialog: null, // 是否显示弹框
+      currentNode: '' // 当前操作的节点
     }
   },
   created() {
@@ -60,9 +61,10 @@ export default {
       const result = await getDepartmentList()
       this.data = transListToTreeData(result, 0)
     },
-    operateDept(type) {
+    operateDept(type, id) {
       if (type === 'add') {
         this.showdialog = true
+        this.currentNode = id
       }
     }
   }
