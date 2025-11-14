@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import { getDepartmentList } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -36,14 +37,34 @@ export default {
       },
       rules: {
         code: [{ required: true, message: '部门编码不能为空', trigger: 'blur' },
-          { min: 2, max: 10, message: '部门编码长度为2-10个字符', trigger: 'blur' }
+          { min: 2, max: 10, message: '部门编码长度为2-10个字符', trigger: 'blur' },
+          { validator: async(rules, value, callback) => {
+            const depts = await getDepartmentList()
+            if (depts.some(item => item.code === value)) {
+              callback(new Error('部门编号已存在'))
+            } else {
+              callback()
+            }
+          },
+          trigger: 'blur'
+          }
         ],
         introduce: [{ required: true, message: '部门介绍不能为空', trigger: 'blur' },
           { min: 1, max: 100, message: '部门介绍应为1-100个字符', trigger: 'blur' }
         ],
         managerId: [{ required: true, message: '部门负责人名字不能为空', trigger: 'blur' }],
         name: [{ required: true, message: '部门名称不能为空', trigger: 'blur' },
-          { min: 2, max: 10, message: '部门名称应为2-10个字符', trigger: 'blur' }]
+          { min: 2, max: 10, message: '部门名称应为2-10个字符', trigger: 'blur' },
+          { validator: async(rules, value, callback) => {
+            const depts = await getDepartmentList()
+            if (depts.some(item => item.name === value)) {
+              callback(new Error('该部门名称已存在'))
+            } else {
+              callback()
+            }
+          },
+          trigger: 'blur'
+          }]
       }
     }
   },
