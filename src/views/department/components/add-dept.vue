@@ -3,7 +3,11 @@
     <el-form label-width="120px" :model="formdata" :rules="rules"> <!--label-width属性用来控制表单域的宽度-->
       <el-form-item label="部门名称" prop="name"><el-input v-model="formdata.name" placeholder="2-10个字符" size="mini" style="width:80%" /></el-form-item>
       <el-form-item label="部门编码" prop="code"><el-input v-model="formdata.code" placeholder="2-10个字符" size="mini" style="width:80%" /></el-form-item>
-      <el-form-item label="部门负责人" prop="managerId"><el-select v-model="formdata.managerId" placeholder="请选择负责人" size="mini" style="width:80%" /></el-form-item>
+      <el-form-item label="部门负责人" prop="managerId">
+        <el-select v-model="formdata.managerId" placeholder="请选择负责人" size="mini" style="width:80%">
+          <el-option v-for="item in chargePersonList" :key="item.id" :label="item.username" :value="item.id" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="部门介绍" prop="introduce"><el-input v-model="formdata.introduce" placeholder="2-10个字符" type="textarea" size="mini" style="width:80%" /></el-form-item>
       <el-form-item>
         <el-row type="flex" justify="center"> <!--justify center 可以让弹性容器的文字居中-->
@@ -18,7 +22,7 @@
 </template>
 
 <script>
-import { getDepartmentList } from '@/api/department'
+import { getDepartmentList, getDepartmentPerson } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -65,13 +69,21 @@ export default {
           },
           trigger: 'blur'
           }]
-      }
+      },
+      chargePersonList: [] // 负责人数组
     }
+  },
+  created() {
+    this.getPerson()
   },
   methods: {
     close() {
       this.$emit('update:showDialog', false)
-    }
+    },
+    async getPerson() {
+      const res = await getDepartmentPerson()
+      this.chargePersonList = res
+    } // 获取负责人列表
   }
 }
 </script>
