@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="添加子部门" :visible="showDialog" @close="close"> <!--通过showDialog prop动态控制弹框的显示隐藏-->
+  <el-dialog :title="formTitle" :visible="showDialog" @close="close"> <!--通过showDialog prop动态控制弹框的显示隐藏-->
     <el-form ref="form" label-width="120px" :model="formdata" :rules="rules"> <!--label-width属性用来控制表单域的宽度-->
       <el-form-item label="部门名称" prop="name"><el-input v-model="formdata.name" placeholder="2-10个字符" size="mini" style="width:80%" /></el-form-item>
       <el-form-item label="部门编码" prop="code"><el-input v-model="formdata.code" placeholder="2-10个字符" size="mini" style="width:80%" /></el-form-item>
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getDepartmentList, getDepartmentPerson, addDepartment, GetDepartmentDetail } from '@/api/department'
+import { getDepartmentList, getDepartmentPerson, addDepartment, GetDepartmentDetail, editDepartment } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -83,6 +83,11 @@ export default {
       chargePersonList: [] // 负责人数组
     } // 编辑模式表单校验思路,当点击编辑时formdata会有id属性,如果有id介绍编辑模式编辑模式下数组排除回填项,也就是说对回填写不进行重复性校验
   },
+  computed: {
+    formTitle() {
+      return this.formdata.id ? '编辑部门信息' : '添加子部门'
+    } // 动态设置表单名称
+  },
   created() {
     this.getPerson()
   },
@@ -90,6 +95,11 @@ export default {
     close() {
       this.$emit('update:showDialog', false)
       this.$refs.form.resetFields() // 重置表单
+      this.formdata = { code: '', // 部门编码
+        introduce: '', // 部门介绍
+        managerId: '', // 部门负责人名字
+        name: '', // 部门名称
+        pid: '' } // 关闭弹层后将formdata中的id去除,以防表单名称混乱,因为重置表单方法只会重置v-model了的数据,而id没有在表单中被双向绑定故需要手动删除
     }, // 关闭弹层,重置表单
     async getPerson() {
       const res = await getDepartmentPerson()
@@ -97,10 +107,17 @@ export default {
     }, // 获取负责人列表
     confirm() {
       this.$refs.form.validate(async isok => {
-        await addDepartment({ ...this.formdata, pid: this.currentNode })
+        let mes = ''
+        if (this.formdata.id) {
+          await editDepartment(this.formdata)
+          mes = '编辑'
+        } else {
+          await addDepartment({ ...this.formdata, pid: this.currentNode })
+          mes = '添加'
+        } // 差异化调用API,添加部门调用添加子部门API,编辑调用编辑API
         this.$emit('updepartmentTree') // 更新部门树数据
         this.$message({
-          message: '添加子部门成功',
+          message: `${mes}部门成功`,
           type: 'success'
         })
         this.close()

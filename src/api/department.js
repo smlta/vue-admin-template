@@ -22,3 +22,10 @@ export const GetDepartmentDetail = (id) => {
     url: `/company/department/${id}`
   })
 }
+export const editDepartment = (data) => {
+  return request({
+    url: `/company/department/${data.id}`,
+    method: 'PUT',
+    data
+  })
+} // 编辑部门API
