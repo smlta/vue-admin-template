@@ -22,7 +22,7 @@
         </template>
       </el-tree> <!--el-tree内置了一个作用域插槽,作用域插槽渲染的次数取决于节点数也就是data中有几个对象-->
     </div>
-    <add-dept :show-dialog.sync="showdialog" :current-node="currentNode" @updepartmentTree="getdepartmentList" /></div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
+    <add-dept ref="addDept" :show-dialog.sync="showdialog" :current-node="currentNode" @updepartmentTree="getdepartmentList" /></div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
 </template>            <!-- :showDialog = "showdialog", @update:showDialog = " showdialog = $event" -->
 
 <script>
@@ -65,7 +65,14 @@ export default {
       if (type === 'add') {
         this.showdialog = true
         this.currentNode = id
-      }
+      } else if (type === 'edit') {
+        this.showdialog = true
+        this.currentNode = id
+        this.$nextTick(() => {
+          this.$refs.addDept.getDepartmentDetail() // vue采取异步更新DOM策略,即数据更新后不会立刻更新该数据相关的Dom而是等所有数据都修改完后,再统一更新DOM
+        }) // 这里用nextTick的原因是因为,子组件的currentNode(props)更新虽然是同步的,但DOM更新却是异步的简单来说就是子组件的props更新后,DOM不会立刻更新,如果不加nextTick会导致子组件DOM没更新完
+      } // 从而获取到旧的组件实例而旧组件实例的props还没赋值
+      // 编辑思路点击编辑获取该节点id,用id调用API获取部门数据,然后赋值
     }
   }
 }

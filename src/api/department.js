@@ -16,4 +16,9 @@ export const addDepartment = (data) => {
     method: 'post',
     data
   })
+} // 添加子部门
+export const GetDepartmentDetail = (id) => {
+  return request({
+    url: `/company/department/${id}`
+  })
 }

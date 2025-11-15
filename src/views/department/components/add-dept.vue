@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getDepartmentList, getDepartmentPerson, addDepartment } from '@/api/department'
+import { getDepartmentList, getDepartmentPerson, addDepartment, GetDepartmentDetail } from '@/api/department'
 export default {
   props: {
     showDialog: {
@@ -99,7 +99,11 @@ export default {
         })
         this.close()
       }) // 对表单整体校验
-    } // 添加子部门方法,点击确定先对表单进行整体校验,通过后调用新增部门接口,接口调用完成后通知父组件重新获取部门数据,然后重置表单,关闭弹层
+    }, // 添加子部门方法,点击确定先对表单进行整体校验,通过后调用新增部门接口,接口调用完成后通知父组件重新获取部门数据,然后重置表单,关闭弹层
+    async getDepartmentDetail() {
+      const res = await GetDepartmentDetail(this.currentNode) // 调用获取部门详情API
+      this.formdata = res // 更新表单数据,这里表单数据和输入框双向绑定所以也是在回填表单
+    } // 获取部门详细信息
   }
 }
 </script>
