@@ -10,3 +10,10 @@ export const getDepartmentPerson = () => {
     url: '/sys/user/simple'
   })
 } // 获取部门负责人列表
+export const addDepartment = (data) => {
+  return request({
+    url: '/company/department',
+    method: 'post',
+    data
+  })
+}

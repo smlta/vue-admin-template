@@ -22,7 +22,7 @@
         </template>
       </el-tree> <!--el-tree内置了一个作用域插槽,作用域插槽渲染的次数取决于节点数也就是data中有几个对象-->
     </div>
-    <add-dept :show-dialog.sync="showdialog" :current-node="currentNode" /></div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
+    <add-dept :show-dialog.sync="showdialog" :current-node="currentNode" @updepartmentTree="getdepartmentList" /></div>       <!--每次触发作用域插槽渲染这个作用域插槽会往父组件的template中传递一个叫slotprops的对象,对象的date属性(如果你:data传递的是xxx就是xxx属性)就是当前遍历到的节点(不包括子节点)-->
 </template>            <!-- :showDialog = "showdialog", @update:showDialog = " showdialog = $event" -->
 
 <script>
@@ -60,7 +60,7 @@ export default {
     async  getdepartmentList() {
       const result = await getDepartmentList()
       this.data = transListToTreeData(result, 0)
-    },
+    }, // 获取部门树数据
     operateDept(type, id) {
       if (type === 'add') {
         this.showdialog = true
