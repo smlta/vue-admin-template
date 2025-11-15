@@ -47,7 +47,10 @@ export default {
         code: [{ required: true, message: '部门编码不能为空', trigger: 'blur' },
           { min: 2, max: 10, message: '部门编码长度为2-10个字符', trigger: 'blur' },
           { validator: async(rules, value, callback) => {
-            const depts = await getDepartmentList()
+            let depts = await getDepartmentList() // 部门信息数组
+            if (this.formdata.id) {
+              depts = depts.filter(item => item.id !== this.formdata.id)
+            } // 编辑模式下先在数组中过滤回填项
             if (depts.some(item => item.code === value)) {
               callback(new Error('部门编号已存在'))
             } else {
@@ -64,7 +67,10 @@ export default {
         name: [{ required: true, message: '部门名称不能为空', trigger: 'blur' },
           { min: 2, max: 10, message: '部门名称应为2-10个字符', trigger: 'blur' },
           { validator: async(rules, value, callback) => {
-            const depts = await getDepartmentList()
+            let depts = await getDepartmentList()
+            if (this.formdata.id) {
+              depts = depts.filter(item => item.id !== this.formdata.id)
+            }
             if (depts.some(item => item.name === value)) {
               callback(new Error('该部门名称已存在'))
             } else {
@@ -75,7 +81,7 @@ export default {
           }]
       },
       chargePersonList: [] // 负责人数组
-    }
+    } // 编辑模式表单校验思路,当点击编辑时formdata会有id属性,如果有id介绍编辑模式编辑模式下数组排除回填项,也就是说对回填写不进行重复性校验
   },
   created() {
     this.getPerson()
