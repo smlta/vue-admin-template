@@ -21,8 +21,8 @@
         </el-table-column>
       </el-table>
       <el-row style="height:60px" type="flex" justify="end" align="middle">
-        <el-pagination layout="prev,pager,next" /> <!--layout属性用配置分页器显示的内容,注意内容之间用逗号分隔-->
-      </el-row>
+        <el-pagination layout="prev,pager,next" :page-size="pageParams.pagesize" :current-page="pageParams.page" :total="pageParams.total" @current-change="pageChange" /> <!--layout属性用配置分页器显示的内容,注意内容之间用逗号分隔-->
+      </el-row>   <!--通过current-change事件监听页码的变化-->
     </div>
   </div>
 </template>
@@ -32,7 +32,12 @@ export default {
   name: 'Role',
   data() {
     return {
-      list: [] // 角色列表数组
+      list: [], // 角色列表数组
+      pageParams: {
+        page: 1, // 当前页码
+        pagesize: 5, // 每页条数
+        total: 0 // 数据条数默认为0,条数通过API获取
+      } // 分页信息对象
     }
   },
   created() {
@@ -40,9 +45,14 @@ export default {
   },
   methods: {
     async  getrolelist() {
-      const { rows } = await getRoleList() // 不传参数默认获取第一页的十条数据
+      const { rows, total } = await getRoleList(this.pageParams) // 进入页面获取第一页数据,每页5条
+      this.pageParams.total = total // 将获取到的数据总数赋值给分页对象的total
       this.list = rows // 将获取的角色数组赋值
-    }
+    },
+    pageChange(page) {
+      this.pageParams.page = page // 切换页码时给params的page重新赋值,然后重新拉取数据
+      this.getrolelist()
+    } // page为当前切换到的页码
   }
 }
 </script>
