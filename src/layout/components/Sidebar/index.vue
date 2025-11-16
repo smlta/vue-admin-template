@@ -12,7 +12,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" /> <!--根据routes路由信息数组为每一个路由生成一个itme-->
       </el-menu>
     </el-scrollbar>
   </div>
