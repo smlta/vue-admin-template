@@ -26,9 +26,9 @@
 </template>            <!-- :showDialog = "showdialog", @update:showDialog = " showdialog = $event" -->
 
 <script>
-import { getDepartmentList } from '@/api/department'
+import { getDepartmentList, deleteDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils/index' // 导入工具函数
-import addDept from './components/add-dept.vue'
+import addDept from './components/add-dept.vue' // 导入添加部门弹层
 export default {
   name: 'Department',
   components: {
@@ -71,6 +71,15 @@ export default {
         this.$nextTick(() => {
           this.$refs.addDept.getDepartmentDetail() // vue采取异步更新DOM策略,即数据更新后不会立刻更新该数据相关的Dom而是等所有数据都修改完后,再统一更新DOM
         }) // 这里用nextTick的原因是因为,子组件的currentNode(props)更新虽然是同步的,但DOM更新却是异步的简单来说就是子组件的props更新后,DOM不会立刻更新,如果不加nextTick会导致子组件DOM没更新完
+      } else {
+        this.$confirm('您确定要删除该部门吗?', '删除部门', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(async() => {
+          await deleteDepartment(id)
+          this.$message.success('删除成功')
+          this.getdepartmentList() // 重新拉取部门数据
+        }) // 点击确定会返回fulfilled状态的promise从而调用then回调
       } // 从而获取到旧的组件实例而旧组件实例的props还没赋值
       // 编辑思路点击编辑获取该节点id,用id调用API获取部门数据,然后赋值
     }

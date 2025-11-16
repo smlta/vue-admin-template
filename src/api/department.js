@@ -29,3 +29,10 @@ export const editDepartment = (data) => {
     data
   })
 } // 编辑部门API
+
+export const deleteDepartment = (id) => {
+  return request({
+    url: `/company/department/${id}`,
+    method: 'DELETE'
+  })
+} // 删除部门API
