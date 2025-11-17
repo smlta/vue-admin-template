@@ -7,3 +7,12 @@ export const getRoleList = (params) => {
     params
   })
 } // 获取角色列表API
+
+export const addRole = (data) => {
+  return request({
+    url: '/sys/role',
+    method: 'POST',
+    data
+  })
+} // 新增角色API
+
