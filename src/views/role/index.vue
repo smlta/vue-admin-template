@@ -2,7 +2,7 @@
   <div class="container">
     <div class="app-container">
       <div class="role-operate">
-        <el-button type="primary" size="mini">添加角色</el-button>
+        <el-button type="primary" size="mini" @click="showdialog = true">添加角色</el-button>
       </div>
       <el-table :data="list">   <!--el-table的data属性为表格数据源,这里用的是获取的角色数组-->
         <el-table-column label="角色" align="center" prop="name" />
@@ -23,6 +23,26 @@
       <el-row style="height:60px" type="flex" justify="end" align="middle">
         <el-pagination layout="prev,pager,next" :page-size="pageParams.pagesize" :current-page="pageParams.page" :total="pageParams.total" @current-change="pageChange" /> <!--layout属性用配置分页器显示的内容,注意内容之间用逗号分隔-->
       </el-row>   <!--通过current-change事件监听页码的变化-->
+      <el-dialog title="新增角色" :visible.sync="showdialog" width="500px"> <!--点击关闭时会触发dialog组件的update:visible事件,并向父级传递事件参数值为false-->
+        <el-form label-width="120px">
+          <el-form-item label="角色名称">
+            <el-input style="width:300px" size="mini" /></el-form-item>
+          <el-form-item label="启用">
+            <el-switch />
+          </el-form-item>
+          <el-form-item label="角色描述">
+            <el-input type="textarea" style="width:300px" size="mini" :rows="3" />
+          </el-form-item>
+          <el-form-item>
+            <el-row type="flex" justify="center">
+              <el-col :span="12">
+                <el-button type="primary" size="mini">确定</el-button>
+                <el-button size="mini">取消</el-button>
+              </el-col>
+            </el-row>
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -37,7 +57,8 @@ export default {
         page: 1, // 当前页码
         pagesize: 5, // 每页条数
         total: 0 // 数据条数默认为0,条数通过API获取
-      } // 分页信息对象
+      }, // 分页信息对象
+      showdialog: false // 是否显示弹层
     }
   },
   created() {
