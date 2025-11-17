@@ -24,14 +24,14 @@
         <el-pagination layout="prev,pager,next" :page-size="pageParams.pagesize" :current-page="pageParams.page" :total="pageParams.total" @current-change="pageChange" /> <!--layout属性用配置分页器显示的内容,注意内容之间用逗号分隔-->
       </el-row>   <!--通过current-change事件监听页码的变化-->
       <el-dialog title="新增角色" :visible.sync="showdialog" width="500px"> <!--点击关闭时会触发dialog组件的update:visible事件,并向父级传递事件参数值为false-->
-        <el-form label-width="120px">
-          <el-form-item label="角色名称">
-            <el-input style="width:300px" size="mini" /></el-form-item>
+        <el-form label-width="120px" :model="formParams" :rules="rules">
+          <el-form-item label="角色名称" prop="name">
+            <el-input v-model="formParams.name" style="width:300px" size="mini" /></el-form-item>
           <el-form-item label="启用">
-            <el-switch />
+            <el-switch v-model="formParams.state" :active-value="1" :inactive-value="0" /> <!-- active-value属性用来设置打开开关时v-model绑定变量的值 inactive-value则是关闭时变量的值 -->
           </el-form-item>
-          <el-form-item label="角色描述">
-            <el-input type="textarea" style="width:300px" size="mini" :rows="3" />
+          <el-form-item label="角色描述" prop="description">
+            <el-input v-model="formParams.description" type="textarea" style="width:300px" size="mini" :rows="3" />
           </el-form-item>
           <el-form-item>
             <el-row type="flex" justify="center">
@@ -58,7 +58,16 @@ export default {
         pagesize: 5, // 每页条数
         total: 0 // 数据条数默认为0,条数通过API获取
       }, // 分页信息对象
-      showdialog: false // 是否显示弹层
+      showdialog: false, // 是否显示弹层
+      formParams: {
+        name: '', // 角色名称
+        description: '', // 角色描述
+        state: 0 // 角色是否启用,默认为未启用
+      }, // 表单数据对象
+      rules: {
+        name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
+        description: [{ required: true, message: '角色描述不能为空', trigger: 'blur' }]
+      } // 规则对象
     }
   },
   created() {
