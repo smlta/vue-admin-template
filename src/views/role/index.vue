@@ -7,21 +7,33 @@
       <el-table :data="list">   <!--el-table的data属性为表格数据源,这里用的是获取的角色数组-->
         <el-table-column label="角色" align="center" prop="name">
           <template #default="{row}">
-            <el-input v-if="row.isedit" size="mini" />
+            <el-input v-if="row.isedit" size="mini" /> <!-- el-table-column中可以通过template解构接收行数据 -->
             <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="启用" align="center" prop="state"> <!--column 的prop属性为设置填充列的字段,这里设置了state设置完后会对象数组中的每个对象都会用state这个字段填充该列-->
-          <template #default="{row}">                 <!--el-table里面内置了循环插槽渲染数据源数组的长度为多少就会启动多少次作用域插槽渲染,每次会向父组件的template传递每一行的数据row通过解构获取-->
-            <span>{{ row.state === 1 ? '已启用':row.state === 0 ? '未启用': '无' }}</span>
+          <template #default="{row}">
+            <el-switch v-if="row.isedit" />              <!--el-table里面内置了循环插槽渲染数据源数组的长度为多少就会启动多少次作用域插槽渲染,每次会向父组件的template传递每一行的数据row通过解构获取-->
+            <span v-else>{{ row.state === 1 ? '已启用':row.state === 0 ? '未启用': '无' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="表述" align="center" prop="description" />
+        <el-table-column label="表述" align="center" prop="description">
+          <template #default="{row}">
+            <el-input v-if="row.isedit" type="textarea" />
+            <span v-else>{{ row.description }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="center"> <!--center为让表头内容居中-->
           <template #default="{row}">
-            <el-button type="text" size="mini">分配权限</el-button>
-            <el-button type="text" size="mini" @click="edit(row)">编辑</el-button>
-            <el-button type="text" size="mini">删除</el-button>
+            <template v-if="row.isedit">
+              <el-button type="primary" size="mini">确定</el-button>
+              <el-button size="mini">取消</el-button>
+            </template>
+            <template v-else>
+              <el-button type="text" size="mini">分配权限</el-button>
+              <el-button type="text" size="mini" @click="edit(row)">编辑</el-button> <!--模版中可以嵌套模版,这里的意思是操作列,根据不同情况使用不同的模版内容如果编辑状态就显示编辑模版反之-->
+              <el-button type="text" size="mini">删除</el-button>
+            </template>
           </template> <!--默认插槽渲染次数取决于数据源数组长度-->
         </el-table-column>
       </el-table>
