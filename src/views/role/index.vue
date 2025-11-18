@@ -7,19 +7,19 @@
       <el-table :data="list">   <!--el-table的data属性为表格数据源,这里用的是获取的角色数组-->
         <el-table-column label="角色" align="center" prop="name">
           <template #default="{row}">
-            <el-input v-if="row.isedit" size="mini" /> <!-- el-table-column中可以通过template解构接收行数据 -->
+            <el-input v-if="row.isedit" v-model="row.editrow.name" size="mini" /> <!-- el-table-column中可以通过template解构接收行数据 -->
             <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="启用" align="center" prop="state"> <!--column 的prop属性为设置填充列的字段,这里设置了state设置完后会对象数组中的每个对象都会用state这个字段填充该列-->
           <template #default="{row}">
-            <el-switch v-if="row.isedit" />              <!--el-table里面内置了循环插槽渲染数据源数组的长度为多少就会启动多少次作用域插槽渲染,每次会向父组件的template传递每一行的数据row通过解构获取-->
+            <el-switch v-if="row.isedit" v-model="row.editrow.state" :active-value="1" :inactive-value="0" />              <!--el-table里面内置了循环插槽渲染数据源数组的长度为多少就会启动多少次作用域插槽渲染,每次会向父组件的template传递每一行的数据row通过解构获取-->
             <span v-else>{{ row.state === 1 ? '已启用':row.state === 0 ? '未启用': '无' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="表述" align="center" prop="description">
           <template #default="{row}">
-            <el-input v-if="row.isedit" type="textarea" />
+            <el-input v-if="row.isedit" v-model="row.editrow.description" type="textarea" />
             <span v-else>{{ row.description }}</span>
           </template>
         </el-table-column>
@@ -97,6 +97,10 @@ export default {
       this.list = rows // 将获取的角色数组赋值
       this.list.forEach(item => {
         this.$set(item, 'isedit', false) // 这里设置响应式属性,因为vue中对象手动添加的属性不具备响应式,故需要通过该方法添加属性
+        this.$set(item, 'editrow', { name: item.name,
+          state: item.state,
+          description: item.description
+        }) // 给每一个角色数据项添加一个缓存表单信息对象,编辑时的表单信息从该缓存对象的字段读取
       }) // 给角色对象数组中的每一个对象都添加编辑标记
     },
     pageChange(page) {
@@ -119,6 +123,9 @@ export default {
     }, // 取消
     edit(row) {
       row.isedit = true // 将当前编程行的编辑状态改为true
+      row.editrow.name = row.name
+      row.editrow.state = row.state
+      row.editrow.description = row.description // 点击编辑时重新给数据项的缓存对象赋值,值为最新获取的数据,目的是当编辑当一半点击取消再点击编辑时编辑表单的数据应该是请求的最新数据
     }
   }
 }
