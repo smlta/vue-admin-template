@@ -16,3 +16,11 @@ export const addRole = (data) => {
   })
 } // 新增角色API
 
+export const updateRole = (data) => {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method: 'PUT',
+    data
+  })
+} // 修改角色API
+

@@ -26,8 +26,8 @@
         <el-table-column label="操作" align="center"> <!--center为让表头内容居中-->
           <template #default="{row}">
             <template v-if="row.isedit">
-              <el-button type="primary" size="mini">确定</el-button>
-              <el-button size="mini">取消</el-button>
+              <el-button type="primary" size="mini" @click="editOk(row)">确定</el-button>
+              <el-button size="mini" @click="row.isedit = false">取消</el-button>
             </template>
             <template v-else>
               <el-button type="text" size="mini">分配权限</el-button>
@@ -64,7 +64,7 @@
   </div>
 </template>
 <script>
-import { getRoleList, addRole } from '@/api/role'
+import { getRoleList, addRole, updateRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -126,6 +126,17 @@ export default {
       row.editrow.name = row.name
       row.editrow.state = row.state
       row.editrow.description = row.description // 点击编辑时重新给数据项的缓存对象赋值,值为最新获取的数据,目的是当编辑当一半点击取消再点击编辑时编辑表单的数据应该是请求的最新数据
+    },
+    async editOk(row) {
+      if (row.editrow.name && row.editrow.description) {
+        await updateRole({ ...row.editrow, id: row.id })
+        this.$message.success('更新角色成功')
+        Object.assign(row, { ...row.editrow, isedit: false }) /* 行内编辑思路,点击确定时先校验表单,name 和description字段必须输入通过后调用API
+                                                               然后弹出成功提示框,最后让该行更新显示,并关闭编辑状态,更新显示需要通过Object.assign方法
+                                                               否则eslint会报错,将通过assign方法将用eidtrow中的数据将row的状态覆盖 */
+      } else {
+        this.$message.warning('角色名称和描述不能为空')
+      }
     }
   }
 }
