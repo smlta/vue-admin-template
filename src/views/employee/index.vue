@@ -4,6 +4,13 @@
       <div class="left">
         <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
         <!-- 树形组件 -->
+        <el-tree
+          :data="organization"
+          :props="defaultprops"
+          :highlight-current="true"
+          default-expand-all
+          :expand-on-click-node="false"
+        /> <!--highlight-current选中项高亮 expand-on-click-node点击节点时节点不折叠-->
       </div>
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
@@ -19,8 +26,27 @@
 </template>
 
 <script>
+import { getDepartmentList } from '@/api/department.js' // 导入获取组织数据API
+import { transListToTreeData } from '@/utils/index.js' // 导入转换树型数据API
 export default {
-  name: 'Employee'
+  name: 'Employee',
+  data() {
+    return {
+      organization: [], // 组织数据
+      defaultprops: {
+        label: 'name',
+        children: 'children'
+      }
+    }
+  },
+  created() {
+    this.getOrganizationData()
+  },
+  methods: {
+    async getOrganizationData() {
+      this.organization = transListToTreeData(await getDepartmentList(), 0) // 将线性组织数据转为树型数据
+    }
+  }
 }
 </script>
 
