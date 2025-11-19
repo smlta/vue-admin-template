@@ -26,13 +26,15 @@
         <el-table-column label="操作" align="center"> <!--center为让表头内容居中-->
           <template #default="{row}">
             <template v-if="row.isedit">
-              <el-button type="primary" size="mini" @click="editOk(row)">确定</el-button>
+              <el-button type="primary" size="mini" @click="editOk(row.id)">确定</el-button>
               <el-button size="mini" @click="row.isedit = false">取消</el-button>
             </template>
             <template v-else>
               <el-button type="text" size="mini">分配权限</el-button>
               <el-button type="text" size="mini" @click="edit(row)">编辑</el-button> <!--模版中可以嵌套模版,这里的意思是操作列,根据不同情况使用不同的模版内容如果编辑状态就显示编辑模版反之-->
-              <el-button type="text" size="mini">删除</el-button>
+              <el-popconfirm title="确定删除该角色吗?" @onConfirm="isdelete(row.id)">
+                <el-button slot="reference" type="text" size="mini">删除</el-button> <!--通过slot reference指定触发弹层的元素,点击弹层的确定会触发onConfirm事件 -->
+              </el-popconfirm>
             </template>
           </template> <!--默认插槽渲染次数取决于数据源数组长度-->
         </el-table-column>
@@ -64,7 +66,7 @@
   </div>
 </template>
 <script>
-import { getRoleList, addRole, updateRole } from '@/api/role'
+import { getRoleList, addRole, updateRole, deleteRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -137,6 +139,14 @@ export default {
       } else {
         this.$message.warning('角色名称和描述不能为空')
       }
+    },
+    async isdelete(id) {
+      await deleteRole(id) // 调用删除角色API
+      this.$message.success('删除角色成功!')
+      if (this.list.length === 1) {
+        this.pageParams.page-- // 页码减1
+      } // 如果删除的角色是该页的最后一个
+      this.getrolelist() // 重新拉取角色数据
     }
   }
 }

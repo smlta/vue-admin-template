@@ -24,3 +24,10 @@ export const updateRole = (data) => {
   })
 } // 修改角色API
 
+export const deleteRole = (id) => {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'DELETE'
+  })
+} // 删除角色方法
+
