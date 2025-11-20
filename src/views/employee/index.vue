@@ -24,7 +24,25 @@
           <el-button size="mini">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
+        <el-table>
+          <el-table-column label="头像" width="80" align="center" />
+          <el-table-column label="姓名" />
+          <el-table-column label="手机号" sortable />
+          <el-table-column label="工号" sortable />
+          <el-table-column label="聘用形式" />
+          <el-table-column label="部门" />
+          <el-table-column label="入职时间" sortable />
+          <el-table-column width="280" label="操作">
+            <template>
+              <el-button type="text" size="small">查看</el-button>
+              <el-button type="text" size="small">角色</el-button>
+              <el-button slot="reference" type="text" size="mini">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table> <!--align:center表头文字居中 sortable该列可排序-->
         <!-- 分页 -->
+        <el-row type="flex" style="height:60px" justify="end" align="middle">
+          <el-pagination layout="total, prev,pager, next" :total="50" /></el-row> <!--分页组件必须要配置total属性要不然不会显示-->
       </div>
     </div>
   </div>
