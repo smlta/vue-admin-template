@@ -24,14 +24,14 @@
           <el-button size="mini">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
-        <el-table>
-          <el-table-column label="头像" width="80" align="center" />
-          <el-table-column label="姓名" />
-          <el-table-column label="手机号" sortable />
-          <el-table-column label="工号" sortable />
-          <el-table-column label="聘用形式" />
-          <el-table-column label="部门" />
-          <el-table-column label="入职时间" sortable />
+        <el-table :data="employeeList">
+          <el-table-column label="头像" width="80" align="center" prop="staffPhoto" />
+          <el-table-column label="姓名" prop="username" />
+          <el-table-column label="手机号" prop="mobile" />
+          <el-table-column label="工号" sortable prop="workNumber" />
+          <el-table-column label="聘用形式" prop="formOfEmployment" />
+          <el-table-column label="部门" prop="departmentName" />
+          <el-table-column label="入职时间" sortable prop="timeOfEntry" />
           <el-table-column width="280" label="操作">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -51,6 +51,7 @@
 <script>
 import { getDepartmentList } from '@/api/department.js' // 导入获取组织数据API
 import { transListToTreeData } from '@/utils/index.js' // 导入转换树型数据API
+import { getEmployeeList } from '@/api/employee' // 获取员工数据API
 export default {
   name: 'Employee',
   data() {
@@ -61,8 +62,9 @@ export default {
         children: 'children'
       },
       queryParams: {
-        departmentId: ''
-      } // 获取员工查询参数对象
+        departmentId: '' // 部门id
+      }, // 获取员工查询参数对象
+      employeeList: [] // 员工数组列表
     }
   },
   created() {
@@ -75,10 +77,18 @@ export default {
       this.$nextTick(() => {
         this.$refs.Tree.setCurrentKey(this.queryParams.departmentId) // 通过setCurrentKey节点默认选中第一个节点
       }) // 因为数据渲染是异步的,所以需要等节点树渲染完毕,后再去选中节点
+
+      // 此时第一个部门的Id已获取到params中去在这里发起请求而不是在methods中
+      this.getemployeelist()
     },
     selectNode(node) {
       this.queryParams.departmentId = node.id
-    } // node为当前选中节点数据,当选择节点时自动记录节点id
+      this.getemployeelist()
+    }, // node为当前选中节点数据,当选择节点时自动记录节点id,记录节点id后再用该id发起请求获取该部门下的所有员工
+    async  getemployeelist() {
+      const { rows } = await getEmployeeList(this.queryParams)
+      this.employeeList = rows
+    } // 获取员工数据
   }
 }
 </script>

@@ -18,7 +18,6 @@ request.interceptors.request.use((config) => {
 
 request.interceptors.response.use((response) => {
   // 当返回的响应状态码为2xx时说明请求成功,需要判断success(是否成功)
-  console.log(response)
   const { data: { success, message, data }} = response // 解构
   if (success) {
     return data // 如果接口能正常返回响应(200),且接口调用成功
