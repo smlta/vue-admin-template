@@ -2,7 +2,7 @@
   <div class="container">
     <div class="app-container">
       <div class="left">
-        <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
+        <el-input v-model="queryParams.keyword" style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" @input="vagueSearch" />
         <!-- 树形组件 -->
         <el-tree
           ref="Tree"
@@ -76,7 +76,8 @@ export default {
       queryParams: {
         departmentId: '', // 部门id
         pagesize: 8, // 每页条数
-        page: 1 // 当前页码
+        page: 1, // 当前页码
+        keyword: ''
       }, // 获取员工查询参数对象
       employeeList: [], // 员工数组列表,
       total: null // 员工数量
@@ -109,7 +110,14 @@ export default {
     updatePage(newpage) {
       this.queryParams.page = newpage
       this.getemployeelist()
-    } // 当页码变化时改变查询的页面重新获取数据
+    }, // 当页码变化时改变查询的页面重新获取数据
+    vagueSearch() {
+      clearTimeout(this.timer) // 在单位时间内如果再次输入清除定时器
+      this.timer = setTimeout(() => {
+        this.queryParams.page = 1
+        this.getemployeelist()
+      }, 300)
+    } // 当输入框值改变时,页码改为1,重新获取数据,需要做防抖处理,这里需要注意要用箭头函数因为普通函数回调this指向window
   }
 }
 </script>
