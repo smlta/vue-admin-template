@@ -20,7 +20,7 @@
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
-          <el-button size="mini">excel导入</el-button>
+          <el-button size="mini" @click="showExcelDialog = true">excel导入</el-button>
           <el-button size="mini" @click="exportExcel">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
@@ -57,6 +57,7 @@
         </el-row> <!--分页组件必须要配置total属性要不然不会显示-->
       </div>
     </div>
+    <ImportExcel :show-excel-dialog.sync="showExcelDialog" />
   </div>
 </template>
 
@@ -65,8 +66,10 @@ import { getDepartmentList } from '@/api/department.js' // 导入获取组织数
 import { transListToTreeData } from '@/utils/index.js' // 导入转换树型数据API
 import { getEmployeeList, exportEmployeeExcel } from '@/api/employee' // 获取员工数据API
 import FileSaver from 'file-saver' // 导入下载Excel文件方法
+import ImportExcel from './components/Import-Excel.vue'
 export default {
   name: 'Employee',
+  components: { ImportExcel },
   data() {
     return {
       organization: [], // 组织数据
@@ -81,7 +84,8 @@ export default {
         keyword: ''
       }, // 获取员工查询参数对象
       employeeList: [], // 员工数组列表,
-      total: null // 员工数量
+      total: null, // 员工数量
+      showExcelDialog: false // 是否显示导入Excel弹框
     }
   },
   created() {
