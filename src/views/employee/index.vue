@@ -21,7 +21,7 @@
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
           <el-button size="mini">excel导入</el-button>
-          <el-button size="mini">excel导出</el-button>
+          <el-button size="mini" @click="exportExcel">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
         <el-table :data="employeeList">
@@ -63,7 +63,8 @@
 <script>
 import { getDepartmentList } from '@/api/department.js' // 导入获取组织数据API
 import { transListToTreeData } from '@/utils/index.js' // 导入转换树型数据API
-import { getEmployeeList } from '@/api/employee' // 获取员工数据API
+import { getEmployeeList, exportEmployeeExcel } from '@/api/employee' // 获取员工数据API
+import FileSaver from 'file-saver' // 导入下载Excel文件方法
 export default {
   name: 'Employee',
   data() {
@@ -117,7 +118,12 @@ export default {
         this.queryParams.page = 1
         this.getemployeelist()
       }, 300)
-    } // 当输入框值改变时,页码改为1,重新获取数据,需要做防抖处理,这里需要注意要用箭头函数因为普通函数回调this指向window
+    }, // 当输入框值改变时,页码改为1,重新获取数据,需要做防抖处理,这里需要注意要用箭头函数因为普通函数回调this指向window
+    async exportExcel() {
+      const res = await exportEmployeeExcel()
+      FileSaver.saveAs(res, '员工信息表')
+      // FileSaver.saveAs(blob对象,文件名),该方法用来将blob对象中的二进制文件写入一个文件,(这里指定名字为员工信息表)然后浏览器下载该文件
+    } // 将员工数据导出为Excel表格
   }
 }
 </script>

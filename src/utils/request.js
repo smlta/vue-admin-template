@@ -4,7 +4,7 @@ import { Message } from 'element-ui'
 import router from '@/router'
 const request = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // 配置基地址
-  timeout: 10000
+  timeout: 150000 // 导出Excel文件,调用导出接口时返回响应较慢需要把时间调长不然,会拿不到blob对象
 }) // 创建axios实例
 request.interceptors.request.use((config) => {
   const token = store.getters.token
@@ -17,6 +17,9 @@ request.interceptors.request.use((config) => {
 }) // 请求拦截器第二个回调执行的时机是,当第一个回调抛出错误,或出现语法错误
 
 request.interceptors.response.use((response) => {
+  if (response.data instanceof Blob) { return response.data }
+  // 如果response.data是Blob二进制对象直接返回
+
   // 当返回的响应状态码为2xx时说明请求成功,需要判断success(是否成功)
   const { data: { success, message, data }} = response // 解构
   if (success) {
