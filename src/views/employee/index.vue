@@ -53,7 +53,8 @@
         </el-table> <!--align:center表头文字居中 sortable该列可排序-->
         <!-- 分页 -->
         <el-row type="flex" style="height:60px" justify="end" align="middle">
-          <el-pagination layout="total, prev,pager, next" :total="50" /></el-row> <!--分页组件必须要配置total属性要不然不会显示-->
+          <el-pagination layout="total, prev, pager, next" :total="total" :page-size="queryParams.pagesize" :current-page="queryParams.page" @current-change="updatePage" />
+        </el-row> <!--分页组件必须要配置total属性要不然不会显示-->
       </div>
     </div>
   </div>
@@ -73,9 +74,12 @@ export default {
         children: 'children'
       },
       queryParams: {
-        departmentId: '' // 部门id
+        departmentId: '', // 部门id
+        pagesize: 8, // 每页条数
+        page: 1 // 当前页码
       }, // 获取员工查询参数对象
-      employeeList: [] // 员工数组列表
+      employeeList: [], // 员工数组列表,
+      total: null // 员工数量
     }
   },
   created() {
@@ -94,12 +98,18 @@ export default {
     },
     selectNode(node) {
       this.queryParams.departmentId = node.id
+      this.queryParams.page = 1 // 当选中一个部门时默认获取该部门第一页的员工数据
       this.getemployeelist()
     }, // node为当前选中节点数据,当选择节点时自动记录节点id,记录节点id后再用该id发起请求获取该部门下的所有员工
     async  getemployeelist() {
-      const { rows } = await getEmployeeList(this.queryParams)
+      const { rows, total } = await getEmployeeList(this.queryParams)
       this.employeeList = rows
-    } // 获取员工数据
+      this.total = total
+    }, // 获取员工数据
+    updatePage(newpage) {
+      this.queryParams.page = newpage
+      this.getemployeelist()
+    } // 当页码变化时改变查询的页面重新获取数据
   }
 }
 </script>
