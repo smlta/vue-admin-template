@@ -12,12 +12,13 @@
           class="excel-upload-input"
           type="file"
           accept=".xlsx, .xls"
-        >
+          @change="fileChange"
+        > <!-- file类型的input它的change事件会在选择文件时触发,事件对象.target.files中保存着文件对象 -->
         <div class="drop">
           <i class="el-icon-upload" />
           <el-button type="text" @click="downloadTemplate">下载导入模板</el-button>
           <span>将文件拖到此处或
-            <el-button type="text">点击上传</el-button>
+            <el-button type="text" @click="upload">点击上传</el-button>
           </span>
         </div>
       </div>
@@ -29,7 +30,7 @@
   </el-dialog>
 </template>
 <script>
-import { DownLoadExcel } from '@/api/employee' // 导入下载Excel模版接口
+import { DownLoadExcel, upLoadExcel } from '@/api/employee' // 导入下载Excel模版接口
 import FileSaver from 'file-saver' // 导入下载工具包
 export default {
   props: {
@@ -42,7 +43,27 @@ export default {
     async downloadTemplate() {
       const res = await DownLoadExcel()
       FileSaver.saveAs(res, '员工Excel模版')
-    } // 下载Excel模版方法
+    }, // 下载Excel模版方法
+    upload() {
+      this.$refs['excel-upload-input'].click()
+    }, // 点击"上传文件时",触发文件选择器,获取input Dom后调用click方法即可实现
+    async fileChange(event) {
+      const filelist = event.target.files // 获取上传的文件数组
+      if (filelist.length > 0) {
+        const file = filelist[0] // 获取上传的文件对象
+        const data = new FormData() // 创建FormData对象封装文件对象
+        data.append('file', file) // 将文件对象封装进Formdata表单的file字段
+        try {
+          await upLoadExcel(data)
+          this.$emit('uploadsuccess') // 触发上传成功事件,让父组件重新拉取数据
+          this.$emit('update:showExcelDialog', false) // 关闭弹层
+        } catch (error) {
+          console.log(error)
+        } finally {
+          this.$refs['excel-upload-input'].value = '' // 清空文件选择器
+        }
+      }
+    } // 文件已选择开始调用接口上传Excel
   }
 }
 </script>

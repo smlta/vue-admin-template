@@ -31,3 +31,15 @@ export const DownLoadExcel = () => {
     responseType: 'blob'
   })
 } // 该接口返回的是blob对象
+
+/**
+ * 上传Excel模版接口(2025-11-22接口无效)
+ * **/
+export const upLoadExcel = (data) => {
+  return request({
+    url: '/sys/user/import',
+    method: 'POST',
+    data
+  })
+} // 该接口接收一个文件对象,以multipart/form-data方式传输
+

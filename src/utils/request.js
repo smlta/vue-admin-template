@@ -41,7 +41,7 @@ request.interceptors.response.use((response) => {
   }
 
   Message({ type: 'error', message: error.message })
-  return Promise.reject(error) // 当返回的响应状态码非2xx时,说明请求失败弹出错误提示框并返回reject的promise
+  return Promise.reject(error) // 当返回的响应状态码非2xx时,说明请求失败弹出错误提示框并将Promise的状态改为rejected
 })
 
 export default request // 导出自定义axios实例

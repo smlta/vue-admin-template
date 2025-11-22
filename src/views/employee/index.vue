@@ -57,7 +57,7 @@
         </el-row> <!--分页组件必须要配置total属性要不然不会显示-->
       </div>
     </div>
-    <ImportExcel :show-excel-dialog.sync="showExcelDialog" />
+    <ImportExcel :show-excel-dialog.sync="showExcelDialog" @uploadsuccess="getemployeelist" />
   </div>
 </template>
 
