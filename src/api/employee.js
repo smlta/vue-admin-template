@@ -43,3 +43,13 @@ export const upLoadExcel = (data) => {
   })
 } // 该接口接收一个文件对象,以multipart/form-data方式传输
 
+/**
+ * 删除员工接口
+ * **/
+export const deleteEmployee = (id) => {
+  return request({
+    url: `/sys/user/${id}`,
+    method: 'DELETE'
+  })
+}
+

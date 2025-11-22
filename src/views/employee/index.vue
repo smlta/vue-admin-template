@@ -44,10 +44,12 @@
           <el-table-column label="部门" prop="departmentName" />
           <el-table-column label="入职时间" sortable prop="timeOfEntry" />
           <el-table-column width="280" label="操作">
-            <template>
+            <template #default="{row}">
               <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small">角色</el-button>
-              <el-button slot="reference" type="text" size="mini">删除</el-button>
+              <el-popconfirm title="确定删除该员工吗?" @onConfirm="deleteemployee(row.id)">
+                <el-button slot="reference" type="text" size="mini">删除</el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table> <!--align:center表头文字居中 sortable该列可排序-->
@@ -64,7 +66,7 @@
 <script>
 import { getDepartmentList } from '@/api/department.js' // 导入获取组织数据API
 import { transListToTreeData } from '@/utils/index.js' // 导入转换树型数据API
-import { getEmployeeList, exportEmployeeExcel } from '@/api/employee' // 获取员工数据API
+import { getEmployeeList, exportEmployeeExcel, deleteEmployee } from '@/api/employee' // 获取员工数据API
 import FileSaver from 'file-saver' // 导入下载Excel文件方法
 import ImportExcel from './components/Import-Excel.vue'
 export default {
@@ -127,7 +129,12 @@ export default {
       const res = await exportEmployeeExcel()
       FileSaver.saveAs(res, '员工信息表')
       // FileSaver.saveAs(blob对象,文件名),该方法用来将blob对象中的二进制文件写入一个文件,(这里指定名字为员工信息表)然后浏览器下载该文件
-    } // 将员工数据导出为Excel表格
+    }, // 将员工数据导出为Excel表格
+    async  deleteemployee(id) {
+      await deleteEmployee(id) // 调用删除员工接口
+      if (this.employeeList.length === 1 && this.queryParams.page > 1) { this.queryParams.page-- }
+      this.getemployeelist() // 重新拉取员工数据
+    }// 删除员工方法
   }
 }
 </script>
