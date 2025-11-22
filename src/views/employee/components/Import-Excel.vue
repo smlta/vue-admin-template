@@ -15,7 +15,7 @@
         >
         <div class="drop">
           <i class="el-icon-upload" />
-          <el-button type="text">下载导入模板</el-button>
+          <el-button type="text" @click="downloadTemplate">下载导入模板</el-button>
           <span>将文件拖到此处或
             <el-button type="text">点击上传</el-button>
           </span>
@@ -29,7 +29,8 @@
   </el-dialog>
 </template>
 <script>
-
+import { DownLoadExcel } from '@/api/employee' // 导入下载Excel模版接口
+import FileSaver from 'file-saver' // 导入下载工具包
 export default {
   props: {
     showExcelDialog: {
@@ -38,7 +39,10 @@ export default {
     }
   },
   methods: {
-
+    async downloadTemplate() {
+      const res = await DownLoadExcel()
+      FileSaver.saveAs(res, '员工Excel模版')
+    } // 下载Excel模版方法
   }
 }
 </script>

@@ -20,3 +20,14 @@ export const exportEmployeeExcel = () => {
     responseType: 'blob' // 因为该接口返回的不再是json字符串而是blob二进制对象所以需要通过responseType指定
   })
 }
+
+/**
+ * 下载员工Excel模版接口
+ * **/
+
+export const DownLoadExcel = () => {
+  return request({
+    url: '/sys/user/import/template',
+    responseType: 'blob'
+  })
+} // 该接口返回的是blob对象
