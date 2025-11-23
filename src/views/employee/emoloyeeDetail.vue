@@ -36,8 +36,8 @@
             <el-col :span="12">
               <el-form-item label="部门" prop="departmentId">
                 <!-- 放置及联部门组件 -->
-                <select-tree class="inputW" /> <!--vue2中给组件添加类名相当于给组件里的根元素添加类名-->
-              </el-form-item>
+                <select-tree v-model="userInfo.departmentId" class="inputW" /> <!--vue2中给组件添加类名相当于给组件里的根元素添加类名-->
+              </el-form-item> <!-- :value=userInfo.departmentId @input="userInfo.departmentId = $event" -->
             </el-col>
           </el-row>
           <el-row>
