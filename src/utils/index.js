@@ -122,7 +122,9 @@ export function transListToTreeData(list, rootvalue) {
   list.forEach(item => {
     if (item.pid === rootvalue) {
       const children = transListToTreeData(list, item.id)
-      item.children = children
+      if (children.length) {
+        item.children = children
+      } // 如果该节点有子节点才将子节点数组挂载到该节点上
       arr.push(item)
     }
   })
