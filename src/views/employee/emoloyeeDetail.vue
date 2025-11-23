@@ -98,6 +98,7 @@
 
 <script>
 import SelectTree from './components/Select-Tree.vue'
+import { addEmployee } from '@/api/employee' // 导入添加员工方法
 export default {
   components: {
     SelectTree
@@ -143,7 +144,13 @@ export default {
   },
   methods: {
     saveData() {
-      this.$refs.userForm.validate()
+      this.$refs.userForm.validate(async isOk => {
+        if (isOk) {
+          await addEmployee(this.userInfo)
+          this.$message.success('新增员工成功!')
+          this.$router.push('/employee') // 跳转员工管理页
+        }
+      })
     }
   }
 }
