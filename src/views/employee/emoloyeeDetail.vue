@@ -28,7 +28,8 @@
                   v-model="userInfo.mobile"
                   size="mini"
                   class="inputW"
-                />
+                  :disabled="!!$route.params.id"
+                /> <!--编辑模式下,手机号不能修改,对于一个字面量如果双重取反就是值就是这个字面量对应的布尔值-->
               </el-form-item>
             </el-col>
           </el-row>
@@ -98,7 +99,7 @@
 
 <script>
 import SelectTree from './components/Select-Tree.vue'
-import { addEmployee, getEmployeeInfo } from '@/api/employee' // 导入添加员工方法
+import { addEmployee, getEmployeeInfo, updateEmployeeInfo } from '@/api/employee' // 导入添加员工方法
 export default {
   components: {
     SelectTree
@@ -151,8 +152,14 @@ export default {
     saveData() {
       this.$refs.userForm.validate(async isOk => {
         if (isOk) {
-          await addEmployee(this.userInfo)
-          this.$message.success('新增员工成功!')
+          // 编辑员工模式
+          if (this.$route.params.id) {
+            await updateEmployeeInfo(this.userInfo) // 调用更新员工接口
+            this.$message.success('员工信息修改成功')
+          } else {
+            await addEmployee(this.userInfo)
+            this.$message.success('新增员工成功!')
+          } // 添加员工模式
           this.$router.push('/employee') // 跳转员工管理页
         }
       })

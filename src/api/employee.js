@@ -70,4 +70,14 @@ export const getEmployeeInfo = (id) => {
     url: `/sys/user/${id}`
   })
 }
+/**
+ * 编辑员工接口
+ * **/
+export const updateEmployeeInfo = (data) => {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
 
