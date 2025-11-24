@@ -16,7 +16,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="工号" prop="workNumber">
-                <el-input size="mini" class="inputW" />
+                <el-input v-model="userInfo.workNumber" size="mini" class="inputW" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -98,7 +98,7 @@
 
 <script>
 import SelectTree from './components/Select-Tree.vue'
-import { addEmployee } from '@/api/employee' // 导入添加员工方法
+import { addEmployee, getEmployeeInfo } from '@/api/employee' // 导入添加员工方法
 export default {
   components: {
     SelectTree
@@ -142,6 +142,11 @@ export default {
 
     }
   },
+  created() {
+    if (this.$route.params.id) {
+      this.getEmployeeInfo()
+    } // 由于详情页有添加和编辑模式这里需要区别是编辑还是添加员工,如果是编辑会有id传过来再获取员工信息回显
+  },
   methods: {
     saveData() {
       this.$refs.userForm.validate(async isOk => {
@@ -151,7 +156,10 @@ export default {
           this.$router.push('/employee') // 跳转员工管理页
         }
       })
-    }
+    },
+    async getEmployeeInfo() {
+      this.userInfo = await getEmployeeInfo(this.$route.params.id) // 将获取的员工信息赋值userinfo由于userinfo和表单绑定表单会自动填充
+    } // 获取员工信息方法
   }
 }
 </script>

@@ -45,7 +45,7 @@
           <el-table-column label="入职时间" sortable prop="timeOfEntry" />
           <el-table-column width="280" label="操作">
             <template #default="{row}">
-              <el-button type="text" size="small">查看</el-button>
+              <el-button type="text" size="small" @click="$router.push(`/employee/detail/${row.id}`)">查看</el-button> <!--点击查看传递该员工的id到详情页-->
               <el-button type="text" size="small">角色</el-button>
               <el-popconfirm title="确定删除该员工吗?" @onConfirm="deleteemployee(row.id)">
                 <el-button slot="reference" type="text" size="mini">删除</el-button>

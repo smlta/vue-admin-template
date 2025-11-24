@@ -62,4 +62,12 @@ export const addEmployee = (data) => {
     data
   })
 }
+/**
+ * 获取员工信息接口接收员工Id
+ * **/
+export const getEmployeeInfo = (id) => {
+  return request({
+    url: `/sys/user/${id}`
+  })
+}
 
