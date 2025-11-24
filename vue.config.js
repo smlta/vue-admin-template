@@ -40,7 +40,9 @@ module.exports = {
       '/api': {
         target: 'https://heimahr.itheima.net/'
       }
-    }
+    } // 配置请求转发,因为前端请求操作跨域问题,后端之间发起请求不存在所有将请求转发给本地后端服务让本地后端服务转发请求
+    // 这里 '/api'的意思如果请求的地址包含 /api 就给请求的加上 'https://heimahr.itheima.net/'前缀
+    // 比如请求'/api/sys/user'就会本地后端服务实际请求地址为 https://heimahr.itheima.net/api/sys/user
     // before: require('./mock/mock-server.js') 数据模拟用,如果不注释所有请求都发不出去
   },
   configureWebpack: {

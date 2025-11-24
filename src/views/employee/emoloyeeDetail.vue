@@ -81,7 +81,7 @@
             <el-col :span="12">
               <el-form-item label="员工头像">
                 <!-- 放置上传图片 -->
-              </el-form-item>
+                <image-up-load /></el-form-item>
             </el-col>
           </el-row>
           <!-- 保存个人信息 -->
@@ -100,9 +100,11 @@
 <script>
 import SelectTree from './components/Select-Tree.vue'
 import { addEmployee, getEmployeeInfo, updateEmployeeInfo } from '@/api/employee' // 导入添加员工方法
+import ImageUpLoad from './components/ImageUpLoad.vue' // 导入图片上传组件
 export default {
   components: {
-    SelectTree
+    SelectTree,
+    ImageUpLoad
   },
   data() {
     return {
