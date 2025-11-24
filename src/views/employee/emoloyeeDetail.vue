@@ -81,7 +81,7 @@
             <el-col :span="12">
               <el-form-item label="员工头像">
                 <!-- 放置上传图片 -->
-                <image-up-load /></el-form-item>
+                <image-up-load v-model="userInfo.staffPhoto" /></el-form-item>
             </el-col>
           </el-row>
           <!-- 保存个人信息 -->
@@ -115,7 +115,8 @@ export default {
         formOfEmployment: null, // 聘用形式
         departmentId: null, // 部门id
         timeOfEntry: '', // 入职时间
-        correctionTime: '' // 转正时间
+        correctionTime: '', // 转正时间
+        staffPhoto: 'https://tse4-mm.cn.bing.net/th/id/OIP-C.Xvvkce7icNnpZSJZo_o6dQHaHa?w=178&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3' // 用户头像链接
       },
       rules: {
         username: [{ required: true, message: '请输入姓名', trigger: 'blur' }, {

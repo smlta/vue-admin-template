@@ -7,17 +7,18 @@
   > <!--action指定文件的上传路径,当选择了文件后文件会立刻以http请求(post,multipart/form-data)的形式发向指定的链接-->
     <!--这里不需要自动上传因为我们要校验,不用自动上传不能去除action而是要给它赋空字符串-->
     <!--show-file-list是否展示文件列表,before-upload的事件处理函数会在我们现在文件后触发-->
-    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+    <img v-if="value" :src="value" class="avatar">
     <i v-else class="el-icon-plus avatar-uploader-icon" />
   </el-upload>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      imageUrl: ''
-    }
+  props: {
+    value: {
+      type: String,
+      default: ''
+    } // value为头像链接有就显示头像没有就显示+图标
   },
   methods: {
     beforeAvatarUpload(file) {
