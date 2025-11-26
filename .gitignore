@@ -14,3 +14,7 @@ tests/**/coverage/
 *.ntvs*
 *.njsproj
 *.sln
+
+.env.development
+
+腾讯云储存桶相关信息.markdown
