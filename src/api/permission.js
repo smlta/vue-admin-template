@@ -30,3 +30,11 @@ export const alterPermission = (data) => {
   })
 }
 
+// 删除权限点
+export const deletePermission = (id) => {
+  return request({
+    url: `/sys/permission/${id}`,
+    method: 'DELETE'
+  })
+}
+

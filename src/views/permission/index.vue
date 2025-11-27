@@ -10,7 +10,7 @@
           <template #default="{row}">
             <el-button v-if="row.type === 1" type="text" size="mini" @click="alterAddParams(2,row.id)">添加</el-button> <!--二级项不显示添加-->
             <el-button type="text" size="mini" @click="edit(row.id)">编辑</el-button>
-            <el-button type="text" size="mini">删除</el-button>
+            <el-button type="text" size="mini" @click="deletePermission(row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -37,7 +37,7 @@
 </template>
 <script>
 import { transListToTreeData } from '@/utils/index' // 导入转换树形数据工具函数
-import { getPermissionList, addPermissionDot, getPermissionDetail, alterPermission } from '@/api/permission'
+import { getPermissionList, addPermissionDot, getPermissionDetail, alterPermission, deletePermission } from '@/api/permission'
 export default {
   name: 'Permission',
   data() { // 点击左上角添加时 type=1 pid = 0 行内添加时 type = 2 pid = 按钮权限点的pid
@@ -74,7 +74,7 @@ export default {
         if (isOk) {
           if (this.formObj.id) {
             await alterPermission(this.formObj)
-            this.$message.success('权限点信息修改成功')
+            this.$message.success('权限点信息修改成功') // 如果是编辑状态表单对象存在id字段
           } else {
             await addPermissionDot(this.formObj)
             this.$message.success('添加权限点成功!')
@@ -94,7 +94,19 @@ export default {
       const res = await getPermissionDetail(id)
       this.formObj = res
       this.showDialog = true
-    } // 获取权限点信息回显
+    }, // 获取权限点信息回显
+    deletePermission(id) { // 当调用confirm方法时会返回一个promise对象,当点击确定时会将promise的状态改为fulfilled从而触发then回调点击取消将promise状态改为rejected触发catch回调
+      this.$confirm('您确定要删除该权限点吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(async() => {
+        await deletePermission(id)
+        this.$message.success('权限点删除成功!')
+        this.getPermissionList() // 重新拉取权限点数据
+      }).catch(() => {
+
+      })
+    } // 删除权限点
   }
 }
 </script>
