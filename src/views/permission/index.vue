@@ -9,7 +9,7 @@
         <el-table-column label="操作">
           <template #default="{row}">
             <el-button v-if="row.type === 1" type="text" size="mini" @click="alterAddParams(2,row.id)">添加</el-button> <!--二级项不显示添加-->
-            <el-button type="text" size="mini">编辑</el-button>
+            <el-button type="text" size="mini" @click="edit(row.id)">编辑</el-button>
             <el-button type="text" size="mini">删除</el-button>
           </template>
         </el-table-column>
@@ -37,7 +37,7 @@
 </template>
 <script>
 import { transListToTreeData } from '@/utils/index' // 导入转换树形数据工具函数
-import { getPermissionList, addPermissionDot } from '@/api/permission'
+import { getPermissionList, addPermissionDot, getPermissionDetail, alterPermission } from '@/api/permission'
 export default {
   name: 'Permission',
   data() { // 点击左上角添加时 type=1 pid = 0 行内添加时 type = 2 pid = 按钮权限点的pid
@@ -72,8 +72,13 @@ export default {
     btnOk() {
       this.$refs.form.validate(async isOk => {
         if (isOk) {
-          await addPermissionDot(this.formObj)
-          this.$message.success('添加权限点成功!')
+          if (this.formObj.id) {
+            await alterPermission(this.formObj)
+            this.$message.success('权限点信息修改成功')
+          } else {
+            await addPermissionDot(this.formObj)
+            this.$message.success('添加权限点成功!')
+          }
           this.btnCancel()
           this.getPermissionList()
           // 重新拉取数据
@@ -84,7 +89,12 @@ export default {
       this.showDialog = true
       this.formObj.type = type
       this.formObj.pid = pid
-    } // 修改权限点参数
+    }, // 修改权限点参数
+    async edit(id) {
+      const res = await getPermissionDetail(id)
+      this.formObj = res
+      this.showDialog = true
+    } // 获取权限点信息回显
   }
 }
 </script>

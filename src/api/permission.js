@@ -14,4 +14,19 @@ export const addPermissionDot = (data) => {
     data
   })
 }
+// 获取权限点详情
+export const getPermissionDetail = (id) => {
+  return request({
+    url: `/sys/permission/${id}`
+  })
+}
+
+// 修改权限点API
+export const alterPermission = (data) => {
+  return request({
+    url: `/sys/permission/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
 
