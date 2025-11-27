@@ -6,3 +6,12 @@ export const getPermissionList = () => {
     url: '/sys/permission'
   })
 }
+// 添加权限点API
+export const addPermissionDot = (data) => {
+  return request({
+    url: '/sys/permission',
+    method: 'POST',
+    data
+  })
+}
+
