@@ -31,3 +31,9 @@ export const deleteRole = (id) => {
   })
 } // 删除角色方法
 
+// 获取所有可用的角色列表
+export const getAllEnableRoles = () => {
+  return request({
+    url: '/sys/role/list/enabled'
+  })
+}

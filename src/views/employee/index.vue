@@ -46,7 +46,7 @@
           <el-table-column width="280" label="操作">
             <template #default="{row}">
               <el-button type="text" size="small" @click="$router.push(`/employee/detail/${row.id}`)">查看</el-button> <!--点击查看传递该员工的id到详情页-->
-              <el-button type="text" size="small">角色</el-button>
+              <el-button type="text" size="small" @click="showrole">角色</el-button>
               <el-popconfirm title="确定删除该员工吗?" @onConfirm="deleteemployee(row.id)">
                 <el-button slot="reference" type="text" size="mini">删除</el-button>
               </el-popconfirm>
@@ -60,6 +60,15 @@
       </div>
     </div>
     <ImportExcel :show-excel-dialog.sync="showExcelDialog" @uploadsuccess="getemployeelist" />
+    <el-dialog title="分配角色" :visible.sync="showRoleDialog">
+      <el-checkbox-group v-model="roleKeyList">
+        <el-checkbox v-for="item in rolesList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox> <!--label属性指定选中单选框对应对象哪个键值-->
+      </el-checkbox-group> <!--用来管理多个单选框-->
+      <el-row type="flex" justify="center">
+        <el-button type="primary" size="mini">确定</el-button>
+        <el-button size="mini">取消</el-button>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -67,6 +76,7 @@
 import { getDepartmentList } from '@/api/department.js' // 导入获取组织数据API
 import { transListToTreeData } from '@/utils/index.js' // 导入转换树型数据API
 import { getEmployeeList, exportEmployeeExcel, deleteEmployee } from '@/api/employee' // 获取员工数据API
+import { getAllEnableRoles } from '@/api/role'
 import FileSaver from 'file-saver' // 导入下载Excel文件方法
 import ImportExcel from './components/Import-Excel.vue'
 export default {
@@ -87,7 +97,10 @@ export default {
       }, // 获取员工查询参数对象
       employeeList: [], // 员工数组列表,
       total: null, // 员工数量
-      showExcelDialog: false // 是否显示导入Excel弹框
+      showExcelDialog: false, // 是否显示导入Excel弹框
+      showRoleDialog: false, // 是否显示角色弹层
+      rolesList: [], // 所有可用角色列表
+      roleKeyList: [] // 选中角色键值数组
     }
   },
   created() {
@@ -134,7 +147,11 @@ export default {
       await deleteEmployee(id) // 调用删除员工接口
       if (this.employeeList.length === 1 && this.queryParams.page > 1) { this.queryParams.page-- }
       this.getemployeelist() // 重新拉取员工数据
-    }// 删除员工方法
+    }, // 删除员工方法
+    async  showrole() {
+      this.rolesList = await getAllEnableRoles()
+      this.showRoleDialog = true
+    } // 显示分配角色弹框
   }
 }
 </script>
