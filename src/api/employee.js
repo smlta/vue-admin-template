@@ -81,3 +81,13 @@ export const updateEmployeeInfo = (data) => {
   })
 }
 
+/**
+ * 为员工分配角色接口
+ * **/
+export const assignRoles = (data) => {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'PUT',
+    data
+  })
+}

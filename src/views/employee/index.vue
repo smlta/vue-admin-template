@@ -46,7 +46,7 @@
           <el-table-column width="280" label="操作">
             <template #default="{row}">
               <el-button type="text" size="small" @click="$router.push(`/employee/detail/${row.id}`)">查看</el-button> <!--点击查看传递该员工的id到详情页-->
-              <el-button type="text" size="small" @click="showrole">角色</el-button>
+              <el-button type="text" size="small" @click="showrole(row.id)">角色</el-button>
               <el-popconfirm title="确定删除该员工吗?" @onConfirm="deleteemployee(row.id)">
                 <el-button slot="reference" type="text" size="mini">删除</el-button>
               </el-popconfirm>
@@ -64,9 +64,11 @@
       <el-checkbox-group v-model="roleKeyList">
         <el-checkbox v-for="item in rolesList" :key="item.id" :label="item.id">{{ item.name }}</el-checkbox> <!--label属性指定选中单选框对应对象哪个键值-->
       </el-checkbox-group> <!--用来管理多个单选框-->
-      <el-row type="flex" justify="center">
-        <el-button type="primary" size="mini">确定</el-button>
-        <el-button size="mini">取消</el-button>
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button type="primary" size="mini" @click="assignroles">确定</el-button>
+          <el-button size="mini" @click="showRoleDialog=false">取消</el-button>
+        </el-col>
       </el-row>
     </el-dialog>
   </div>
@@ -75,7 +77,7 @@
 <script>
 import { getDepartmentList } from '@/api/department.js' // 导入获取组织数据API
 import { transListToTreeData } from '@/utils/index.js' // 导入转换树型数据API
-import { getEmployeeList, exportEmployeeExcel, deleteEmployee } from '@/api/employee' // 获取员工数据API
+import { getEmployeeList, exportEmployeeExcel, deleteEmployee, getEmployeeInfo, assignRoles } from '@/api/employee' // 获取员工数据API
 import { getAllEnableRoles } from '@/api/role'
 import FileSaver from 'file-saver' // 导入下载Excel文件方法
 import ImportExcel from './components/Import-Excel.vue'
@@ -100,7 +102,8 @@ export default {
       showExcelDialog: false, // 是否显示导入Excel弹框
       showRoleDialog: false, // 是否显示角色弹层
       rolesList: [], // 所有可用角色列表
-      roleKeyList: [] // 选中角色键值数组
+      roleKeyList: [], // 选中角色键值数组
+      currentEmployeeId: '' // 当前要分配角色员工的Id
     }
   },
   created() {
@@ -148,10 +151,18 @@ export default {
       if (this.employeeList.length === 1 && this.queryParams.page > 1) { this.queryParams.page-- }
       this.getemployeelist() // 重新拉取员工数据
     }, // 删除员工方法
-    async  showrole() {
-      this.rolesList = await getAllEnableRoles()
+    async  showrole(id) {
+      this.rolesList = await getAllEnableRoles() // 获取当前可分配角色
+      this.currentEmployeeId = id // 记录当前员工的Id方便后面调用接口
+      const { roleIds } = await getEmployeeInfo(id) // 获取员工的角色数组数据
+      this.roleKeyList = roleIds
       this.showRoleDialog = true
-    } // 显示分配角色弹框
+    }, // 显示分配角色弹框
+    async  assignroles() {
+      await assignRoles({ id: this.currentEmployeeId, roleIds: this.roleKeyList })
+      this.$message.success('角色分配成功!')
+      this.showRoleDialog = false
+    } // 分配角色
   }
 }
 </script>
