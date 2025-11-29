@@ -26,6 +26,7 @@ const actions = {
   async getUserInfo(context) {
     const res = await getUserInfo() // 调用获取用户信息接口
     context.commit('setUserInfo', res)
+    return res // 相当于return Prmomise.resolve(res),这里返回用户个人信息方便后面筛选用户拥有的动态路由
   },
   async logout(context) {
     context.commit('clearToken')

@@ -2,6 +2,7 @@ import router from './router' // 导入路由实例
 import store from './store' // 导入vuex仓库实例
 import nProgress from 'nprogress' // 导入页面导航栏进度条插件
 import 'nprogress/nprogress.css' // 导入进度条样式
+import { asyncroutes } from '@/router/index' // 导入动态路由
 const whiteList = ['/login', '/404'] // 白名单页面(访问不需要token)
 router.beforeEach(async(to, from, next) => {
   nProgress.start() // 开启进度条
@@ -11,7 +12,11 @@ router.beforeEach(async(to, from, next) => {
       nProgress.done()
     } else {
       if (!store.getters.userId) {
-        await store.dispatch('user/getUserInfo')
+        const { roles: { menus }} = await store.dispatch('user/getUserInfo') // 获取并设置个人用户信息并解构用户拥有的权限
+        const filterasync = asyncroutes.filter(item => {
+          return menus.includes(item.name) // 遍历动态路由如果当前遍历到的动态路由在用户权限数组中,则筛选出来
+        }) // 用户能访问的权限页
+        console.log(filterasync)
       } // 如果有token但访问的不是登录页,判断是否获取过用户个人信息没获取过就发起请求获取
       // 通过user模块中userinfo userId字段值的有无判断是否获取过数据
       next()

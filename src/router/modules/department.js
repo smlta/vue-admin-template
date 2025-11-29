@@ -1,6 +1,7 @@
 import layout from '@/layout'
 export default {
   path: '/department',
+  name: 'department',
   component: layout,
   children: [{
     path: '', // 二级路由为''时/department表示显示一级和二级路由组件
