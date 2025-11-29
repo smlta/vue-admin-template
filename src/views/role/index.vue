@@ -30,7 +30,7 @@
               <el-button size="mini" @click="row.isedit = false">取消</el-button>
             </template>
             <template v-else>
-              <el-button type="text" size="mini">分配权限</el-button>
+              <el-button type="text" size="mini" @click="assignpermission(row.id)">分配权限</el-button>
               <el-button type="text" size="mini" @click="edit(row)">编辑</el-button> <!--模版中可以嵌套模版,这里的意思是操作列,根据不同情况使用不同的模版内容如果编辑状态就显示编辑模版反之-->
               <el-popconfirm title="确定删除该角色吗?" @onConfirm="isdelete(row.id)">
                 <el-button slot="reference" type="text" size="mini">删除</el-button> <!--通过slot reference指定触发弹层的元素,点击弹层的确定会触发onConfirm事件 -->
@@ -62,11 +62,30 @@
           </el-form-item>
         </el-form>
       </el-dialog>
+      <el-dialog title="分配权限" :visible.sync="showPermissionDialog">
+        <el-tree
+          ref="tree"
+          :data="permissionList"
+          :props="props"
+          show-checkbox
+          default-expand-all
+          node-key="id"
+          :default-checked-keys="permIds"
+        /> <!--show-checkbox节点是否可勾选-->
+        <el-row type="flex" justify="center">
+          <el-col :span="6">
+            <el-button type="primary" size="mini" @click="assignPermission">确定</el-button>
+            <el-button size="mini" @click="showPermissionDialog = false">取消</el-button>
+          </el-col>
+        </el-row>
+      </el-dialog>
     </div>
   </div>
 </template>
 <script>
-import { getRoleList, addRole, updateRole, deleteRole } from '@/api/role'
+import { getRoleList, addRole, updateRole, deleteRole, getRoleDetail } from '@/api/role'
+import { getPermissionList, assignPermissionDot } from '@/api/permission'
+import { transListToTreeData } from '@/utils/index'
 export default {
   name: 'Role',
   data() {
@@ -86,7 +105,15 @@ export default {
       rules: {
         name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
         description: [{ required: true, message: '角色描述不能为空', trigger: 'blur' }]
-      } // 规则对象
+      }, // 规则对象
+      showPermissionDialog: false, // 是否展示分配权限弹层
+      permissionList: [], // 权限点列表数据
+      props: {
+        label: 'name', // 使用节点的哪个字段的值作为节点显示的内容
+        children: 'children' // 指定子节点字段
+      }, // 节点树配置对象
+      currentRoleId: '', // 当前要分配权限的角色Id
+      permIds: [] // 角色权限点键值数组
     }
   },
   created() {
@@ -147,6 +174,19 @@ export default {
         this.pageParams.page-- // 页码减1
       } // 如果删除的角色是该页的最后一个
       this.getrolelist() // 重新拉取角色数据
+    },
+    async assignpermission(id) {
+      this.permissionList = transListToTreeData(await getPermissionList(), 0)
+      const { permIds } = await getRoleDetail(id) // 该角色拥有的权限点键值数组
+      this.permIds = permIds // 勾选该角色拥有的权限点
+      this.currentRoleId = id // 记录当前要分配角色的Id
+      this.showPermissionDialog = true
+    }, // 分配权限
+    async assignPermission() {
+      await assignPermissionDot({ id: this.currentRoleId, permIds: this.$refs.tree.getCheckedKeys() })
+      // el-tree组件实例的getCheckedKeys方法可以获得当前选中的所有树节点的键数组
+      this.$message.success('权限分配成功')
+      this.showPermissionDialog = false
     }
   }
 }

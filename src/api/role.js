@@ -37,3 +37,10 @@ export const getAllEnableRoles = () => {
     url: '/sys/role/list/enabled'
   })
 }
+
+// 获取角色详情
+export const getRoleDetail = (id) => {
+  return request({
+    url: `/sys/role/${id}`
+  })
+}
