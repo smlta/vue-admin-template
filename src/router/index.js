@@ -63,17 +63,16 @@ export const constantRoutes = [
     }]
   },
   // 导入各路由模块
-  departmentRouter,
+  { path: '*', redirect: '/404', hidden: true }// 404 page must be placed at the end !!!
+]
+export const asyncroutes = [departmentRouter,
   approvalRouter,
   attendanceRouter,
   employeeRouter,
   permissionRouter,
   roleRouter,
   salaryRouter,
-  socialRouter,
-  { path: '*', redirect: '/404', hidden: true }// 404 page must be placed at the end !!!
-]
-
+  socialRouter] // 动态路由,静态路由就是所有人都能访问的路由不需要权限,而动态路由有权限才能访问,才能看见这个选项这里做拆分的目的是为了区分用户身份
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
