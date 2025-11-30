@@ -65,13 +65,14 @@
       <el-dialog title="分配权限" :visible.sync="showPermissionDialog">
         <el-tree
           ref="tree"
+          check-strictly
           :data="permissionList"
           :props="props"
           show-checkbox
           default-expand-all
           node-key="id"
           :default-checked-keys="permIds"
-        /> <!--show-checkbox节点是否可勾选-->
+        /> <!--show-checkbox节点是否可勾选, check-strictly选中子复选框是是否选中父复选框-->
         <el-row type="flex" justify="center">
           <el-col :span="6">
             <el-button type="primary" size="mini" @click="assignPermission">确定</el-button>
