@@ -1,8 +1,10 @@
 import { getToken, setToken, removeToken } from '@/utils/auth' // 导入Token相关的API
 import { login, getUserInfo } from '@/api/user' // 导入登录API
+import { constantRoutes } from '@/router/index' // 导入静态路由
 const state = {
   token: getToken(), // token的值从本地储存读取
-  userinfo: {} // 用户基本信息对象
+  userinfo: {}, // 用户基本信息对象
+  routes: constantRoutes// 用户路由数组(默认为静态路由)
 }
 const mutations = {
   setToken(state, token) {
@@ -15,7 +17,10 @@ const mutations = {
   },
   setUserInfo(state, data) {
     state.userinfo = data
-  } // 用户用户基本信息状态
+  }, // 用户用户基本信息状态
+  setUserAsyncRoutes(state, asyncarr) {
+    state.routes = [...constantRoutes, ...asyncarr]
+  } // 为用户路由数组添加动态路由,用户路由数组(即用户可以访问的页面 = 静态路由数组 + 动态路由数组)
 }
 const actions = {
   async login(context, data) {

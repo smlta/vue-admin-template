@@ -16,6 +16,7 @@ router.beforeEach(async(to, from, next) => {
         const filterasync = asyncroutes.filter(item => {
           return menus.includes(item.name) // 遍历动态路由如果当前遍历到的动态路由在用户权限数组中,则筛选出来
         }) // 用户能访问的权限页
+        store.commit('user/setUserAsyncRoutes', filterasync) // 在vuex仓库中添加用户拥有的动态路由
         router.addRoutes([...filterasync, { path: '*', redirect: '/404', hidden: true }])
         next(to.path) // 解决router缺陷,添加的动态路由不会立即生效,需要重新路由导航一次
       } else {
