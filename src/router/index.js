@@ -84,6 +84,6 @@ const router = createRouter()
 export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
-}
-
+} // 重置路由方法,由于当我们点击退出时只是切换到登录页并没有刷新浏览器,用户的动态路由还残留在静态路由中此时如果另一个用户再次登录,便可以通过地址的方式访问它没有的权限页
+// 所以退出时需要重置路由为静态路由
 export default router

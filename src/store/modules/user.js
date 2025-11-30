@@ -1,6 +1,6 @@
 import { getToken, setToken, removeToken } from '@/utils/auth' // 导入Token相关的API
 import { login, getUserInfo } from '@/api/user' // 导入登录API
-import { constantRoutes } from '@/router/index' // 导入静态路由
+import { constantRoutes, resetRouter } from '@/router/index' // 导入静态路由
 const state = {
   token: getToken(), // token的值从本地储存读取
   userinfo: {}, // 用户基本信息对象
@@ -34,8 +34,9 @@ const actions = {
     return res // 相当于return Prmomise.resolve(res),这里返回用户个人信息方便后面筛选用户拥有的动态路由
   },
   async logout(context) {
-    context.commit('clearToken')
-    context.commit('setUserInfo', {})
+    context.commit('clearToken') // 清除本地储存的Token和vue中储存的token
+    context.commit('setUserInfo', {}) // 清空用户信息对象
+    resetRouter() // 重置路由
   }
 }
 export default {
