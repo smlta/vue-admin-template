@@ -16,10 +16,13 @@ router.beforeEach(async(to, from, next) => {
         const filterasync = asyncroutes.filter(item => {
           return menus.includes(item.name) // 遍历动态路由如果当前遍历到的动态路由在用户权限数组中,则筛选出来
         }) // 用户能访问的权限页
-        console.log(filterasync)
-      } // 如果有token但访问的不是登录页,判断是否获取过用户个人信息没获取过就发起请求获取
+        router.addRoutes([...filterasync, { path: '*', redirect: '/404', hidden: true }])
+        next(to.path) // 解决router缺陷,添加的动态路由不会立即生效,需要重新路由导航一次
+      } else {
+        next()
+      }// 如果有token但访问的不是登录页,判断是否获取过用户个人信息没获取过就发起请求获取
       // 通过user模块中userinfo userId字段值的有无判断是否获取过数据
-      next()
+      // addRoutes接收一个路由数组用来动态添加路由,这里因为404路由必须在所有路由的最后面,所以把它从静态路由中剔除,在这里添加即可保障404路由在所有路由的最后面
     } // 如果有token判断要去的是不是登录页,如果是拦截回主页,不是则直接放行
   } else {
     if (whiteList.includes(to.path)) {
