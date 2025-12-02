@@ -5,3 +5,9 @@ export const getHomeData = () => {
     url: '/home/data'
   })
 }
+// 获取首页消息数据
+export const getNoticeData = () => {
+  return request({
+    url: '/home/notice'
+  })
+}

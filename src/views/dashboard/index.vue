@@ -171,34 +171,13 @@
         <div class="panel">
           <div class="panel-title">通知公告</div>
           <div class="information-list">
-            <div class="information-list-item">
-              <img src="@/assets/common/img.jpeg" alt="">
+            <div v-for="item in noticeArray" :key="item" class="information-list-item">
+              <img :src="item.icon" alt="">
               <div>
                 <p>
-                  <span class="col">朱继柳</span> 发布了
-                  第1期“传智大讲堂”互动讨论获奖名单公布
-                </p>
-                <p>2018-07-21 15:21:38</p>
-              </div>
-            </div>
-            <div class="information-list-item">
-              <img src="@/assets/common/img.jpeg" alt="">
-              <div>
-                <p>
-                  <span class="col">朱继柳</span> 发布了
-                  第1期“传智大讲堂”互动讨论获奖名单公布
-                </p>
-                <p>2018-07-21 15:21:38</p>
-              </div>
-            </div>
-            <div class="information-list-item">
-              <img src="@/assets/common/img.jpeg" alt="">
-              <div>
-                <p>
-                  <span class="col">朱继柳</span> 发布了
-                  第1期“传智大讲堂”互动讨论获奖名单公布
-                </p>
-                <p>2018-07-21 15:21:38</p>
+                  <span class="col">{{ item.notice }}
+                  </span></p>
+                <p>{{ item.createTime }}</p>
               </div>
             </div>
           </div>
@@ -211,14 +190,15 @@
 <script>
 import CountTo from 'vue-count-to'
 import { mapGetters } from 'vuex' // 导入映射getters函数
-import { getHomeData } from '@/api/dashboard'
+import { getHomeData, getNoticeData } from '@/api/dashboard'
 export default {
   components: {
     CountTo
   },
   data() {
     return {
-      projectData: {} // 项目数据
+      projectData: {}, // 项目数据
+      noticeArray: [] // 通知数据数组
     }
   },
   computed: {
@@ -226,12 +206,17 @@ export default {
   },
   created() {
     this.getHomeData()
+    this.getNoticeData()
   },
   methods: {
     async getHomeData() {
       const res = await getHomeData()
       this.projectData = res
-    } // 获取首页项目数据
+    }, // 获取首页项目数据
+    async  getNoticeData() {
+      const res = await getNoticeData()
+      this.noticeArray = res
+    } // 获取侧边栏通知数据
   }
 }
 </script>
