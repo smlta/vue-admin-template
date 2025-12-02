@@ -5,6 +5,9 @@ const getters = {
   avatar: state => state.user.userinfo.staffPhoto, // 获取用户头像
   name: state => state.user.userinfo.username, // 获取用户名
   userId: state => state.user.userinfo.userId, // 获取用户Id
-  routes: state => state.user.routes // 返回用户路由数组
+  routes: state => state.user.routes, // 返回用户路由数组
+  company: state => state.user.userinfo.company, // 公司名称
+  department: state => state.user.userinfo.departmentName // 部门名称
+
 }
 export default getters
