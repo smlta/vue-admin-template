@@ -98,7 +98,7 @@
                 </div>
               </div>
             </div>
-            <div class="chart">
+            <div ref="social" class="chart">
               <!-- 图表 -->
             </div>
           </div>
@@ -127,7 +127,7 @@
                 </div>
               </div>
             </div>
-            <div class="chart">
+            <div ref="provident" class="chart">
               <!-- 图表 -->
             </div>
           </div>
@@ -191,6 +191,15 @@
 import CountTo from 'vue-count-to'
 import { mapGetters } from 'vuex' // 导入映射getters函数
 import { getHomeData, getNoticeData } from '@/api/dashboard'
+import * as echarts from 'echarts/core'
+import { GridComponent } from 'echarts/components'
+import { LineChart } from 'echarts/charts'
+import { UniversalTransition } from 'echarts/features'
+import { CanvasRenderer } from 'echarts/renderers'
+
+echarts.use([GridComponent, LineChart, CanvasRenderer, UniversalTransition]) // 按需导入echarts图表
+// import * as echarts from 'echarts' // 导入所有echarts图表
+
 export default {
   components: {
     CountTo
@@ -198,15 +207,67 @@ export default {
   data() {
     return {
       projectData: {}, // 项目数据
-      noticeArray: [] // 通知数据数组
+      noticeArray: [], // 通知数据数组
+      social: null, // 社保echarts实例
+      provident: null // 公积金echarts实例
     }
   },
   computed: {
     ...mapGetters(['avatar', 'name', 'company', 'department'])
   },
+  watch: {
+    projectData() {
+      console.log(this.projectData)
+      this.social.setOption({ xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: this.projectData.socialInsurance?.xAxis // 设置x轴数据
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: this.projectData.socialInsurance?.yAxis, // 设置y轴数据
+          type: 'line',
+          areaStyle: {
+            color: '#04c9be' // 折线下面积填充颜色
+          },
+          lineStyle: {
+            color: '#04c9be' // 折线颜色
+          }
+        }
+      ] }) // 渲染社保图表,因为社保的相关的数据是通过请求获取的但请求是异步的所有,需要监听接到数据时才设置配置项
+
+      this.provident.setOption({ xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: this.projectData.providentFund?.xAxis // 设置x轴数据
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: this.projectData.providentFund?.yAxis, // 设置y轴数据
+          type: 'line',
+          areaStyle: {
+            color: '#04c9be' // 折线下面积填充颜色
+          },
+          lineStyle: {
+            color: '#04c9be' // 折线颜色
+          }
+        }
+      ] }) // 设置公积金图表
+    }
+  },
   created() {
     this.getHomeData()
     this.getNoticeData()
+  },
+  mounted() {
+    this.social = echarts.init(this.$refs.social) // 初始化social图表的echarts容器
+    this.provident = echarts.init(this.$refs.provident) // 初始化公积金图表的echarts容器
   },
   methods: {
     async getHomeData() {
